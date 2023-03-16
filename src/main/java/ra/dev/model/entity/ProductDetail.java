@@ -1,5 +1,6 @@
 package ra.dev.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -19,11 +20,25 @@ public class ProductDetail {
     private int quantity;
     @ManyToOne
     @JoinColumn(name = "ProductID")
+    @JsonIgnore
     private Product product;
-    @ManyToMany
-    @JoinTable(name = "Product_Sizes", joinColumns = @JoinColumn(name = "productDetailID"), inverseJoinColumns = @JoinColumn(name = "sizesID"))
-    private List<Size> listSizes;
-    @ManyToMany
-    @JoinTable(name = "Product_Color", joinColumns = @JoinColumn(name = "productDetailID"), inverseJoinColumns = @JoinColumn(name = "colorID"))
-    private List<Color> listColor;
+
+    @ManyToOne
+    @JoinColumn(name = "SizeID")
+    private Size size;
+    @ManyToOne
+    @JoinColumn(name = "ColorID")
+    private Color color;
+
+
+
+
+//    @ManyToMany
+//    @JoinTable(name = "Product_Sizes", joinColumns = @JoinColumn(name = "productDetailID"), inverseJoinColumns = @JoinColumn(name = "sizesID"))
+//    private List<Size> listSizes;
+//    @ManyToMany
+//    @JoinTable(name = "Product_Color", joinColumns = @JoinColumn(name = "productDetailID"), inverseJoinColumns = @JoinColumn(name = "colorID"))
+//    private List<Color> listColor;
+
+
 }

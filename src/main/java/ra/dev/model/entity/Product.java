@@ -37,9 +37,16 @@ public class Product {
     @ManyToMany
     @JoinTable(name = "Product_Catalog", joinColumns = @JoinColumn(name = "productID"), inverseJoinColumns = @JoinColumn(name = "catalogID"))
     private List<Catalog> listCatalog;
+
     @ManyToMany
     @JoinTable(name = "Product_Collection", joinColumns = @JoinColumn(name = "productID"), inverseJoinColumns = @JoinColumn(name = "collectionID"))
     private List<Collection> listCollection;
     @OneToMany(mappedBy = "product")
     List<Image> listImage = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "product")
+//    List<Size> sizeList = new ArrayList<>();
+//    @OneToMany(mappedBy = "product")
+//    List<Color> colorList = new ArrayList<>();
+
 }
