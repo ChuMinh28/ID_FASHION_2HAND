@@ -2,9 +2,9 @@ package ra.dev.model.service;
 
 
 import ra.dev.model.entity.User;
-import ra.dev.payload.request.LoginRequest;
-import ra.dev.payload.request.SignupRequest;
-import ra.dev.payload.response.JwtResponse;
+import ra.dev.dto.request.LoginRequest;
+import ra.dev.dto.request.SignupRequest;
+import ra.dev.dto.respone.JwtResponse;
 
 import java.util.List;
 
