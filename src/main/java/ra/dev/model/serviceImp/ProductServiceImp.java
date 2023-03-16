@@ -1,9 +1,8 @@
 package ra.dev.model.serviceImp;
 
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ra.dev.dto.request.GetProduct;
+import ra.dev.dto.respone.GetProduct;
 import ra.dev.model.entity.Product;
 import ra.dev.model.repository.ProductRepository;
 import ra.dev.model.service.ProductService;
