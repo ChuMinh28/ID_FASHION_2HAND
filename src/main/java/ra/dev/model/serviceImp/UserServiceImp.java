@@ -20,9 +20,9 @@ import ra.dev.model.entity.User;
 import ra.dev.model.repository.RoleRepository;
 import ra.dev.model.repository.UserRepository;
 import ra.dev.model.service.UserService;
-import ra.dev.payload.request.LoginRequest;
-import ra.dev.payload.request.SignupRequest;
-import ra.dev.payload.response.JwtResponse;
+import ra.dev.dto.request.LoginRequest;
+import ra.dev.dto.request.SignupRequest;
+import ra.dev.dto.respone.JwtResponse;
 import ra.dev.security.CustomUserDetails;
 import ra.dev.validation.Validate;
 
@@ -68,22 +68,11 @@ public class UserServiceImp implements UserService {
 
     @Override
     public boolean saveOrUpdate(SignupRequest signUpRequest) {
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return false;
-        }
         User user = new User();
-        if (Validate.checkEmail(signUpRequest.getEmail())) {
-            user.setEmail(signUpRequest.getEmail());
-        } else {
-            return false;
-        }
-        if (Validate.checkPassword(signUpRequest.getPassword())) {
-            user.setPassword(encoder.encode(signUpRequest.getPassword()));
-        } else {
-            return false;
-        }
         user.setUserStatus(true);
         user.setUserName(signUpRequest.getUserName());
+        user.setPassword(encoder.encode(signUpRequest.getPassword()));
+        user.setEmail(signUpRequest.getEmail());
         user.setAddress(signUpRequest.getAddress());
         user.setFullName(signUpRequest.getFullName());
         user.setPhoneNumber(signUpRequest.getPhoneNumber());

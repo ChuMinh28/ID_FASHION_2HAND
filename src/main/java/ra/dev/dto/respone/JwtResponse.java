@@ -1,4 +1,4 @@
-package ra.dev.payload.response;
+package ra.dev.dto.respone;
 
 import java.util.List;
 
