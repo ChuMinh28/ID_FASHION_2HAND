@@ -1,9 +1,13 @@
 package ra.dev.model.serviceImp;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,6 +39,8 @@ public class UserServiceImp implements UserService {
     UserRepository userRepository;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private JavaMailSender emailSender;
     @Autowired
     private PasswordEncoder encoder;
     @Autowired
@@ -162,6 +168,25 @@ public class UserServiceImp implements UserService {
         }
     }
 
+    @Override
+    public boolean getToken(String email) {
+        try {
+            String jwt = generateTokenEmail(email);
+            sendSimpleMessage(email, "Token", jwt);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public User resetPass(String token, String newPass) {
+        String userName = getUserNameFromJwt(token);
+        User users = findByUserName(userName);
+        users.setPassword(encoder.encode(newPass));
+        return userRepository.save(users);
+    }
+
     public String generateToken(CustomUserDetails customUserDetails) {
         Date now = new Date();
         Date dateExpired = new Date(now.getTime() + JWT_EXPIRATION);
@@ -170,5 +195,29 @@ public class UserServiceImp implements UserService {
                 .setIssuedAt(now)
                 .setExpiration(dateExpired)
                 .signWith(SignatureAlgorithm.HS512, JWT_SECRET).compact();
+    }
+    public String generateTokenEmail(String email) {
+        User users = userRepository.findByEmail(email);
+        Date now = new Date();
+        Date dateExpired = new Date(now.getTime() + JWT_EXPIRATION);
+        //Tao chuoi JWT tu userName
+        return Jwts.builder().setSubject(users.getUserName())
+                .setIssuedAt(now)
+                .setExpiration(dateExpired)
+                .signWith(SignatureAlgorithm.HS512, JWT_SECRET).compact();
+    }
+    public void sendSimpleMessage(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("daohung.rks@gmail.com");
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        emailSender.send(message);
+    }
+    public String getUserNameFromJwt(String token) {
+        Claims claims = Jwts.parser().setSigningKey(JWT_SECRET)
+                .parseClaimsJws(token).getBody();
+        //tra lai thong tin username
+        return claims.getSubject();
     }
 }

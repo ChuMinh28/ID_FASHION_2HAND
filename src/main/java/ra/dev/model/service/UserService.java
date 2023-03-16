@@ -27,4 +27,7 @@ public interface UserService {
     boolean existsByUserName(String userName);
 
     JwtResponse login(LoginRequest loginRequest);
+    boolean getToken(String email);
+    User resetPass(String token, String newPass);
+
 }
