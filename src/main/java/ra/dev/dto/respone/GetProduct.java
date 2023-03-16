@@ -1,4 +1,4 @@
-package ra.dev.dto.request;
+package ra.dev.dto.respone;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

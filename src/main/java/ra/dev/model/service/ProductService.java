@@ -1,8 +1,6 @@
 package ra.dev.model.service;
 
-import ra.dev.controller.ProductController;
-import ra.dev.dto.request.GetProduct;
-import ra.dev.model.entity.Product;
+import ra.dev.dto.respone.GetProduct;
 
 import java.util.List;
 
