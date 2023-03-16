@@ -36,27 +36,28 @@ public class UserController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-//    @Autowired
-//    private JwtTokenProvider tokenProvider;
+
     @Autowired
     private RoleService roleService;
     @Autowired
     private PasswordEncoder encoder;
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
+    @GetMapping("/getToken")
+    public ResponseEntity<?> sendEmail(@RequestParam("email") String email) {
+        boolean gettoken = userService.getToken(email);
+        if (gettoken){
+            return ResponseEntity.ok("Send email successfully");
+        }else {
+            return ResponseEntity.ok("Failed");
+        }
 
-//    @Autowired
-//    private ProvideSendEmail provideSendEmail;
+    }
+    @PostMapping("/resetPass")
+    public User resetPass(@RequestParam("token") String token, @RequestBody String newPass) {
+        return userService.resetPass(token,newPass);
+    }
 
-//    @PostMapping("register")
-//    public ResponseEntity<?> Register(@RequestBody SignupRequest signupRequest) {
-//        boolean check = userService.saveOrUpdate(signupRequest);
-//        if (check) {
-//            return ResponseEntity.ok("Register successfully");
-//        } else {
-//            return ResponseEntity.badRequest().body("Register failed!");
-//        }
-//    }
 @PostMapping("/signup")
 public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
     if (userService.existsByUserName(signupRequest.getUserName())) {

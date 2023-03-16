@@ -29,4 +29,7 @@ public interface UserService {
 
     boolean existsByEmail(String email);
     JwtResponse login(LoginRequest loginRequest);
+    boolean getToken(String email);
+    User resetPass(String token, String newPass);
+
 }
