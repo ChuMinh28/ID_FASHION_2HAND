@@ -14,13 +14,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ra.dev.jwt.JwtTokenProvider;
+import ra.dev.model.entity.ERole;
+import ra.dev.model.entity.Roles;
 import ra.dev.model.entity.User;
+import ra.dev.model.repository.RoleRepository;
 import ra.dev.model.repository.UserRepository;
 import ra.dev.model.service.UserService;
 import ra.dev.payload.request.LoginRequest;
+import ra.dev.payload.request.SignupRequest;
 import ra.dev.payload.response.JwtResponse;
 import ra.dev.security.CustomUserDetails;
+import ra.dev.validation.Validate;
 
 
 import java.util.Date;
@@ -39,13 +43,13 @@ public class UserServiceImp implements UserService {
     private JavaMailSender emailSender;
     @Autowired
     private PasswordEncoder encoder;
-
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Value("${ra.jwt.secret}")
     private String JWT_SECRET;
     @Value(("${ra.jwt.expiration}"))
     private int JWT_EXPIRATION;
-    //Tao jwt tu thong tin cua User
 
     @Override
     public List<User> findAll() {
@@ -63,13 +67,64 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public User saveOrUpdate(User user) {
-        return userRepository.save(user);
+    public boolean saveOrUpdate(SignupRequest signUpRequest) {
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            return false;
+        }
+        User user = new User();
+        if (Validate.checkEmail(signUpRequest.getEmail())) {
+            user.setEmail(signUpRequest.getEmail());
+        } else {
+            return false;
+        }
+        if (Validate.checkPassword(signUpRequest.getPassword())) {
+            user.setPassword(encoder.encode(signUpRequest.getPassword()));
+        } else {
+            return false;
+        }
+        user.setUserStatus(true);
+        user.setUserName(signUpRequest.getUserName());
+        user.setAddress(signUpRequest.getAddress());
+        user.setFullName(signUpRequest.getFullName());
+        user.setPhoneNumber(signUpRequest.getPhoneNumber());
+        user.setZipCode(signUpRequest.getZipCode());
+        Set<String> strRoles = signUpRequest.getListRoles();
+        Set<Roles> listRoles = new HashSet<>();
+        if (strRoles==null){
+            //User quyen mac dinh
+            Roles userRole = roleRepository.findByRoleName(ERole.ROLE_USER).orElseThrow(()->new RuntimeException("Error: Role is not found"));
+            listRoles.add(userRole);
+        }else {
+            strRoles.forEach(role->{
+                switch (role){
+                    case "admin":
+                        Roles adminRole = roleRepository.findByRoleName(ERole.ROLE_ADMIN)
+                                .orElseThrow(()->new RuntimeException("Error: Role is not found"));
+                        listRoles.add(adminRole);
+                    case "moderator":
+                        Roles moderatorRole = roleRepository.findByRoleName(ERole.ROLE_MODERATOR)
+                                .orElseThrow(()->new RuntimeException("Error: Role is not found"));
+                        listRoles.add(moderatorRole);
+                    case "user":
+                        Roles userRole = roleRepository.findByRoleName(ERole.ROLE_USER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
+                        listRoles.add(userRole);
+                }
+            });
+        }
+        user.setListRoles(listRoles);
+        try {
+            userRepository.save(user);
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
+
 
     @Override
     public void delete(int userID) {
-
     }
 
     @Override
@@ -94,7 +149,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public JwtResponse login(LoginRequest loginRequest) {
-        Authentication auth = new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword());
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword())
         );
