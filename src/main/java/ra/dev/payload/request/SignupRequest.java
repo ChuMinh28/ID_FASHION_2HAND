@@ -16,6 +16,7 @@ public class SignupRequest {
     private String phoneNumber;
     private String fullName;
     private String address;
+    private int zipCode;
     private boolean userStatus;
     private Set<String> listRoles;
 
