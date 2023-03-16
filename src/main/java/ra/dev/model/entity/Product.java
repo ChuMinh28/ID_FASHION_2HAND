@@ -40,7 +40,7 @@ public class Product {
 
     @ManyToMany
     @JoinTable(name = "Product_Collection", joinColumns = @JoinColumn(name = "productID"), inverseJoinColumns = @JoinColumn(name = "collectionID"))
-    private List<Collection> listCollection;
+    private List<Collections> listCollection;
     @OneToMany(mappedBy = "product")
     List<Image> listImage = new ArrayList<>();
 
