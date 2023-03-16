@@ -23,7 +23,7 @@ public class User {
     @Column(name = "FullName")
     private String fullName;
     @Column(name = "PhoneNumber")
-    private String PhoneNumber;
+    private String phoneNumber;
     @Column(name = "Address")
     private String address;
     @Column(name = "ZipCode")
