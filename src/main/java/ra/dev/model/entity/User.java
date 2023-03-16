@@ -18,6 +18,8 @@ public class User {
     private int userID;
     @Column(name = "Email")
     private String email;
+    @Column(name = "UserName")
+    private String userName;
     @Column(name = "Password")
     private String password;
     @Column(name = "FullName")
