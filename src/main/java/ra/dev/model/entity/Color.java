@@ -1,8 +1,11 @@
 package ra.dev.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Color")
@@ -16,6 +19,9 @@ public class Color {
     private String colorName;
     @Column(name = "ColorStatus")
     private boolean colorStatus;
+    @OneToMany(mappedBy = "color")
+    @JsonIgnore
+    private List<ProductDetail> productDetails = new ArrayList<>();
 
     @Override
     public String toString() {
