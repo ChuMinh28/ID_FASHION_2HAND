@@ -15,15 +15,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ra.dev.jwt.JwtAuthenticationFilter;
 
-
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
-    private CustomUserDetailService customUserDetailService;
+    private CustomUserDetailsService customUserDetailService;
+
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(){
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
     }
 
@@ -51,8 +51,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors() // Ngăn chặn request từ một domain khác
                 .and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/v1/**").permitAll()// Cho phép tất cả mọi người truy cập vào địa chỉ này
+                .antMatchers("/api/v1/auth/**").permitAll() // Cho phép tất cả mọi người truy cập vào địa chỉ này
+                .antMatchers("/api/v1/**").permitAll()
                 .anyRequest().authenticated(); // Tất cả các request khác đều cần phải xác thực mới được truy cập
+
+        // Thêm một lớp Filter kiểm tra jwt
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

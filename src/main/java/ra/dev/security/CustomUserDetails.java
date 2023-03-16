@@ -16,11 +16,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
     private int userId;
-    private String email;
+    private String userName;
     @JsonIgnore
     private String password;
+    private String email;
     private String phone;
     private boolean userStatus;
+    private String fullName;
+    private String address;
     private Collection<? extends GrantedAuthority> authorities;
 
     @Override
@@ -37,10 +40,13 @@ public class CustomUserDetails implements UserDetails {
         //Tra ve doi tuong CustomUserDetails
         return new CustomUserDetails(
                 user.getUserID(),
-                user.getFullName(),
+                user.getUserName(),
                 user.getPassword(),
+                user.getEmail(),
                 user.getPhoneNumber(),
                 user.isUserStatus(),
+                user.getFullName(),
+                user.getAddress(),
                 listAuthorities
         );
 
@@ -53,7 +59,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.userName;
     }
 
     @Override
