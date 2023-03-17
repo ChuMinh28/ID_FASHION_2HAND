@@ -2,12 +2,16 @@ package ra.dev.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ra.dev.model.entity.User;
 import ra.dev.model.service.UserService;
 import ra.dev.payload.request.LoginRequest;
 import ra.dev.payload.request.SignupRequest;
 import ra.dev.payload.response.MessageResponse;
+import ra.dev.dto.request.LoginRequest;
+import ra.dev.dto.request.SignupRequest;
+import ra.dev.validation.Validate;
 
 
 @CrossOrigin(origins = "http://localhost:8080")
@@ -36,6 +40,18 @@ public class UserController {
 
     @PostMapping("register")
     public ResponseEntity<?> register(@RequestBody SignupRequest signupRequest) {
+        if (userService.existsByUserName(signupRequest.getUserName())) {
+            return ResponseEntity.badRequest().body("UserName is already!");
+        }
+        if (userService.existsByEmail(signupRequest.getEmail())) {
+            return ResponseEntity.badRequest().body("Email is already!");
+        }
+        if (!Validate.checkEmail(signupRequest.getEmail())) {
+            return ResponseEntity.badRequest().body("Enter email format please!");
+        }
+        if (!Validate.checkPassword(signupRequest.getPassword())) {
+            return ResponseEntity.badRequest().body("Password consists of 6 characters, including lowercase, uppercase and number!");
+        }
         boolean check = userService.saveOrUpdate(signupRequest);
         if (check) {
             return ResponseEntity.ok("Register successfully!");
@@ -46,7 +62,21 @@ public class UserController {
 
     @PostMapping("signIn")
     public ResponseEntity<?> loginUser2(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(userService.login(loginRequest));
+        if (userService.existsByUserName(loginRequest.getUserName())) {
+            return ResponseEntity.ok(userService.login(loginRequest));
+        } else {
+            return ResponseEntity.badRequest().body("Incorrect account or password! Please try again!");
+        }
+    }
+
+    @GetMapping("logOut")
+    public ResponseEntity<?> logOut() {
+        try {
+            SecurityContextHolder.clearContext();
+            return ResponseEntity.ok("You have been logged out.");
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body("Action failed!");
+        }
     }
 
 
