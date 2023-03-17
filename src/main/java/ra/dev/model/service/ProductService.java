@@ -1,9 +1,8 @@
 package ra.dev.model.service;
 
 import ra.dev.dto.respone.GetProduct;
+import ra.dev.dto.respone.ProductDetailGet;
 import ra.dev.dto.respone.ProductSale;
-import ra.dev.model.entity.Product;
-import ra.dev.model.entity.ProductDetail;
 
 import java.util.List;
 
@@ -15,5 +14,6 @@ public interface ProductService {
 
     List<GetProduct> getByFilter(String color, String size);
     List<GetProduct> getProductLimited();
+    ProductDetailGet getDetail(int productID);
 
 }
