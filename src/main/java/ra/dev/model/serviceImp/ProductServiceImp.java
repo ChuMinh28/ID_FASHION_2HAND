@@ -3,6 +3,7 @@ package ra.dev.model.serviceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ra.dev.dto.respone.GetProduct;
+import ra.dev.dto.respone.ProductDetailGet;
 import ra.dev.dto.respone.ProductSale;
 import ra.dev.model.entity.Color;
 import ra.dev.model.entity.Product;
@@ -222,5 +223,26 @@ public class ProductServiceImp implements ProductService {
             }
         }
         return productList;
+    }
+
+    @Override
+    public ProductDetailGet getDetail(int productID) {
+        ProductDetailGet productDetailGet = new ProductDetailGet();
+        Product product = productRepository.findById(productID).get();
+        List<ProductDetail> productDetailList = productDetailRepository.findProductDetailByProductProductID(productID);
+        List<Color> colorList = new ArrayList<>();
+        List<Size> sizeList = new ArrayList<>();
+        for (ProductDetail productDetail :productDetailList ) {
+            colorList.add(productDetail.getColor());
+            sizeList.add(productDetail.getSize());
+        }
+        productDetailGet.setProductID(productID);
+        productDetailGet.setProductName(product.getProductName());
+        productDetailGet.setImage(product.getImage());
+        productDetailGet.setPrice(product.getPrice());
+        productDetailGet.setTitle(product.getTitle());
+        productDetailGet.setColorList(colorList);
+        productDetailGet.setSizeList(sizeList);
+        return productDetailGet;
     }
 }

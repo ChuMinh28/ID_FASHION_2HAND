@@ -3,10 +3,8 @@ package ra.dev.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ra.dev.dto.respone.GetProduct;
+import ra.dev.dto.respone.ProductDetailGet;
 import ra.dev.dto.respone.ProductSale;
-import ra.dev.model.entity.Color;
-import ra.dev.model.entity.Product;
-import ra.dev.model.entity.ProductDetail;
 import ra.dev.model.service.ProductService;
 
 import java.util.List;
@@ -55,6 +53,12 @@ public class ProductController {
     public List<GetProduct> getProductLimited(){
         return productService.getProductLimited();
     }
+
+    @GetMapping("getProductDetail/{productID}")
+    public ProductDetailGet getProduct(@PathVariable("productID")int productID){
+        return productService.getDetail(productID);
+    }
+
 
 
 
