@@ -3,6 +3,7 @@ package ra.dev.model.serviceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ra.dev.dto.request.CartCreate;
+import ra.dev.dto.request.OrderRequest;
 import ra.dev.model.entity.*;
 import ra.dev.model.repository.*;
 import ra.dev.model.service.OrderDetailService;
@@ -87,5 +88,30 @@ public class OrderDetailServiceImp implements OrderDetailService {
         return orderDetail;
 
 
+    }
+
+    @Override
+    public boolean deleteProductFromCart(int orderDetailID) {
+        try {
+            orderDetailRepository.deleteById(orderDetailID);
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateCart(int orderDetailID, OrderRequest orderRequest) {
+        try {
+            OrderDetail orderDetail = orderDetailRepository.findById(orderDetailID).get();
+            orderDetail.setQuantity(orderRequest.getQuantity());
+            int totalAmount = orderDetail.getPrice()*orderRequest.getQuantity();
+            orderDetail.setTotalAmount(totalAmount);
+            orderDetailRepository.save(orderDetail);
+            return true;
+        }catch (Exception e) {
+            return false;
+        }
     }
 }
