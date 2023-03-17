@@ -24,8 +24,8 @@ public class Color {
     @JsonIgnore
     private List<ProductDetail> productDetails = new ArrayList<>();
 
-//    @Override
-//    public String toString() {
-//        return this.colorName;
-//    }
+    @Override
+    public String toString() {
+        return this.colorName;
+    }
 }

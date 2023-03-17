@@ -3,6 +3,7 @@ package ra.dev.model.serviceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ra.dev.dto.respone.GetProduct;
+import ra.dev.dto.respone.ProductSale;
 import ra.dev.model.entity.Color;
 import ra.dev.model.entity.Product;
 import ra.dev.model.entity.ProductDetail;
@@ -84,5 +85,35 @@ public class ProductServiceImp implements ProductService {
             List<GetProduct> list = new ArrayList<>();
             return list;
         }
+    }
+
+    @Override
+    public List<ProductSale> getBestSale() {
+        List<ProductDetail> productDetailList = productDetailRepository.findAll();
+        Collections.sort(productDetailList, new Comparator<ProductDetail>() {
+            @Override
+            public int compare(ProductDetail u1, ProductDetail u2) {
+                    return u2.getDiscount() - u1.getDiscount();
+            }
+        });
+        List<ProductSale> productSales = new ArrayList<>();
+        List<ProductDetail> productDetailsListGet10Item = new ArrayList<>(productDetailList.subList(0,5));
+        for (ProductDetail productDetail: productDetailsListGet10Item) {
+            Product product = productRepository.findProductByListProductDetailContaining(productDetail);
+            ProductSale productSale = new ProductSale(
+                    product.getProductID(),
+                    product.getProductName(),
+                    product.getImage(),
+                    product.getPrice(),
+                    productDetail.getColor().getColorName(),
+                    productDetail.getSize().getSizeName(),
+                    productDetail.getDiscount());
+            if(productSales.contains(productSale)){
+                continue;
+            }else {
+                productSales.add(productSale);
+            }
+        }
+        return productSales;
     }
 }

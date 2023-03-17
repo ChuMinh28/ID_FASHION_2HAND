@@ -6,9 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ra.dev.model.entity.User;
 import ra.dev.model.service.UserService;
-import ra.dev.payload.request.LoginRequest;
-import ra.dev.payload.request.SignupRequest;
-import ra.dev.payload.response.MessageResponse;
+
 import ra.dev.dto.request.LoginRequest;
 import ra.dev.dto.request.SignupRequest;
 import ra.dev.validation.Validate;
