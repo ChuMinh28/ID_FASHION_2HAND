@@ -51,6 +51,10 @@ public class ProductController {
     ){
         return productService.getByFilter(colorName,sizeName);
     }
+    @GetMapping("getListLimited")
+    public List<GetProduct> getProductLimited(){
+        return productService.getProductLimited();
+    }
 
 
 
