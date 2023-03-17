@@ -5,6 +5,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ra.dev.dto.respone.GetAllUserResponse;
+import ra.dev.dto.respone.UserResponse;
 import ra.dev.model.entity.ERole;
 import ra.dev.model.entity.Roles;
 import ra.dev.model.entity.User;
@@ -27,10 +33,7 @@ import ra.dev.security.CustomUserDetails;
 import ra.dev.validation.Validate;
 
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,18 +55,85 @@ public class UserServiceImp implements UserService {
     private int JWT_EXPIRATION;
 
     @Override
-    public List<User> findAll() {
-        return null;
+    public Map<String, Object> findAll(Pageable pageable) {
+        try {
+            Page<User> listUser = userRepository.findAll(pageable);
+            List<GetAllUserResponse> list = new ArrayList<>();
+            for (User user : listUser) {
+                GetAllUserResponse userResponse = new GetAllUserResponse();
+                userResponse.setUserName(user.getUserName());
+                userResponse.setEmail(user.getEmail());
+                userResponse.setFullName(user.getFullName());
+                userResponse.setPhoneNumber(user.getPhoneNumber());
+                userResponse.setAddress(user.getAddress());
+                userResponse.setZipCode(user.getZipCode());
+                list.add(userResponse);
+            }
+            Map<String, Object> listUserResponse = new HashMap<>();
+            listUserResponse.put("listUser", list);
+            listUserResponse.put("totalItems",listUser.getTotalElements());
+            listUserResponse.put("totalPage",listUser.getTotalPages());
+            return listUserResponse;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public Map<String, Object> softByName(String direction, int size, int page) {
+        Sort.Order order;
+        if (direction.equals("asc")) {
+            order = new Sort.Order(Sort.Direction.ASC, "FullName");
+        } else {
+            order = new Sort.Order(Sort.Direction.DESC, "FullName");
+        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by(order));
+        Page<User> listUser = userRepository.findAll(pageable);
+        List<GetAllUserResponse> list = new ArrayList<>();
+        for (User user : listUser) {
+            GetAllUserResponse userResponse = new GetAllUserResponse();
+            userResponse.setUserName(user.getUserName());
+            userResponse.setEmail(user.getEmail());
+            userResponse.setFullName(user.getFullName());
+            userResponse.setPhoneNumber(user.getPhoneNumber());
+            userResponse.setAddress(user.getAddress());
+            userResponse.setZipCode(user.getZipCode());
+            list.add(userResponse);
+        }
+        Map<String, Object> listUserResponse = new HashMap<>();
+        listUserResponse.put("listUser", list);
+        listUserResponse.put("totalItems",listUser.getTotalElements());
+        listUserResponse.put("totalPage",listUser.getTotalPages());
+        return listUserResponse;
     }
 
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email) ;
+        return userRepository.findByEmail(email);
     }
 
     @Override
     public User findByID(int userID) {
         return userRepository.findById(userID).get();
+    }
+
+    @Override
+    public UserResponse getUserByID(int userID) {
+        try {
+            User user = userRepository.findById(userID).get();
+            UserResponse userResponse = new UserResponse();
+            userResponse.setUserName(user.getUserName());
+            userResponse.setEmail(user.getEmail());
+            userResponse.setFullName(user.getFullName());
+            userResponse.setPhoneNumber(user.getPhoneNumber());
+            userResponse.setAddress(user.getAddress());
+            userResponse.setZipCode(user.getZipCode());
+            return userResponse;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -79,20 +149,20 @@ public class UserServiceImp implements UserService {
         user.setZipCode(signUpRequest.getZipCode());
         Set<String> strRoles = signUpRequest.getListRoles();
         Set<Roles> listRoles = new HashSet<>();
-        if (strRoles==null){
+        if (strRoles == null) {
             //User quyen mac dinh
-            Roles userRole = roleRepository.findByRoleName(ERole.ROLE_USER).orElseThrow(()->new RuntimeException("Error: Role is not found"));
+            Roles userRole = roleRepository.findByRoleName(ERole.ROLE_USER).orElseThrow(() -> new RuntimeException("Error: Role is not found"));
             listRoles.add(userRole);
-        }else {
-            strRoles.forEach(role->{
-                switch (role){
+        } else {
+            strRoles.forEach(role -> {
+                switch (role) {
                     case "admin":
                         Roles adminRole = roleRepository.findByRoleName(ERole.ROLE_ADMIN)
-                                .orElseThrow(()->new RuntimeException("Error: Role is not found"));
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
                         listRoles.add(adminRole);
                     case "moderator":
                         Roles moderatorRole = roleRepository.findByRoleName(ERole.ROLE_MODERATOR)
-                                .orElseThrow(()->new RuntimeException("Error: Role is not found"));
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
                         listRoles.add(moderatorRole);
                     case "user":
                         Roles userRole = roleRepository.findByRoleName(ERole.ROLE_USER)
@@ -105,7 +175,7 @@ public class UserServiceImp implements UserService {
         try {
             userRepository.save(user);
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -113,12 +183,38 @@ public class UserServiceImp implements UserService {
 
 
     @Override
-    public void delete(int userID) {
+    public boolean delete(int userID, String action) {
+        User user = userRepository.findById(userID).get();
+        if (action.equals("lock")) {
+            user.setUserStatus(false);
+            userRepository.save(user);
+            return false;
+        } else {
+            user.setUserStatus(true);
+            userRepository.save(user);
+            return true;
+        }
     }
 
     @Override
-    public List<User> searchByName(String userName) {
-        return null;
+    public Map<String, Object> searchByName(String userName, Pageable pageable) {
+        Page<User> listUser = userRepository.searchUserByFullNameContainingIgnoreCase(userName,pageable);
+        List<GetAllUserResponse> list = new ArrayList<>();
+        for (User user : listUser) {
+            GetAllUserResponse userResponse = new GetAllUserResponse();
+            userResponse.setUserName(user.getUserName());
+            userResponse.setEmail(user.getEmail());
+            userResponse.setFullName(user.getFullName());
+            userResponse.setPhoneNumber(user.getPhoneNumber());
+            userResponse.setAddress(user.getAddress());
+            userResponse.setZipCode(user.getZipCode());
+            list.add(userResponse);
+        }
+        Map<String, Object> listUserResponse = new HashMap<>();
+        listUserResponse.put("listUser", list);
+        listUserResponse.put("totalItems",listUser.getTotalElements());
+        listUserResponse.put("totalPage",listUser.getTotalPages());
+        return listUserResponse;
     }
 
     @Override
@@ -148,8 +244,7 @@ public class UserServiceImp implements UserService {
         if (!customUserDetail.isUserStatus()) {
             return null;
         } else {
-
-        String jwt = generateToken(customUserDetail);
+            String jwt = generateToken(customUserDetail);
             List<String> listRoles = customUserDetail.getAuthorities().stream()
                     .map(item -> item.getAuthority()).collect(Collectors.toList());
             return new JwtResponse(jwt, users.getUserID(), customUserDetail.getUsername(), customUserDetail.getEmail(),
@@ -185,6 +280,7 @@ public class UserServiceImp implements UserService {
                 .setExpiration(dateExpired)
                 .signWith(SignatureAlgorithm.HS512, JWT_SECRET).compact();
     }
+
     public String generateTokenEmail(String email) {
         User users = userRepository.findByEmail(email);
         Date now = new Date();
@@ -195,6 +291,7 @@ public class UserServiceImp implements UserService {
                 .setExpiration(dateExpired)
                 .signWith(SignatureAlgorithm.HS512, JWT_SECRET).compact();
     }
+
     public void sendSimpleMessage(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("daohung.rks@gmail.com");
@@ -203,6 +300,7 @@ public class UserServiceImp implements UserService {
         message.setText(text);
         emailSender.send(message);
     }
+
     public String getUserNameFromJwt(String token) {
         Claims claims = Jwts.parser().setSigningKey(JWT_SECRET)
                 .parseClaimsJws(token).getBody();
