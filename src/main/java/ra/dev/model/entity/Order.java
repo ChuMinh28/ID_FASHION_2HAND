@@ -36,5 +36,5 @@ public class Order {
     private User user;
     @OneToMany(mappedBy = "order")
     @JsonIgnore
-    List<OrderDetail> listOrderDetail = new ArrayList<>();
+    private List<OrderDetail> listOrderDetail = new ArrayList<>();
 }

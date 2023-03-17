@@ -1,6 +1,6 @@
 package ra.dev.model.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,7 +10,10 @@ import java.util.Set;
 
 @Entity
 @Table(name = "User")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
