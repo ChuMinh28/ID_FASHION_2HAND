@@ -7,7 +7,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import ra.dev.dto.respone.GetAllUserResponse;
 import ra.dev.dto.respone.UserResponse;
 import ra.dev.model.entity.User;
 import ra.dev.model.service.UserService;
@@ -16,7 +15,6 @@ import ra.dev.dto.request.LoginRequest;
 import ra.dev.dto.request.SignupRequest;
 import ra.dev.validation.Validate;
 
-import java.util.List;
 import java.util.Map;
 
 

@@ -9,7 +9,6 @@ import java.util.List;
 public interface ProductDetailService {
     List<Size> getListSize(int colorID,int productID);
     List<Color> getListColor(int sizeID,int productID);
-
     ProductDetail getDetail(int sizeID, int ColorID, int productID);
 
 }

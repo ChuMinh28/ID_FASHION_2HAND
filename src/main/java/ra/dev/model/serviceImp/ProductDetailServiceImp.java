@@ -7,10 +7,10 @@ import ra.dev.model.entity.ProductDetail;
 import ra.dev.model.entity.Size;
 import ra.dev.model.repository.ProductDetailRepository;
 import ra.dev.model.service.ProductDetailService;
-import ra.dev.model.service.ProductService;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 public class ProductDetailServiceImp implements ProductDetailService {

@@ -25,13 +25,10 @@ public class OrderDetail {
     private String size;
     @ManyToOne
     @JsonIgnore
-
     @JoinColumn(name = "productID")
     private Product product;
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "orderID")
     private Order order;
-
-
 }
