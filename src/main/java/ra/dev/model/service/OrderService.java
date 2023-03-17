@@ -1,10 +1,9 @@
 package ra.dev.model.service;
 
-import ra.dev.model.entity.Order;
+import ra.dev.dto.respone.OrderResponse;
 
-import java.util.List;
 
 public interface OrderService {
-
-
+    boolean changeOrderStatus(int orderID, String action);
+    OrderResponse getUserOrder(int orderID);
 }

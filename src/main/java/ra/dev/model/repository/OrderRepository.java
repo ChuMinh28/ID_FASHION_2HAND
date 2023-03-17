@@ -7,8 +7,8 @@ import ra.dev.model.entity.Order;
 
 import java.util.List;
 
-@Repository
 
+@Repository
 public interface OrderRepository extends JpaRepository<Order,Integer> {
     List<Order> findOrderByOrderStatus(int orderStatus);
 }
