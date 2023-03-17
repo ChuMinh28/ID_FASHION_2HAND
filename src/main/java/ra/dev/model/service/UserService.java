@@ -1,26 +1,31 @@
 package ra.dev.model.service;
 
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ra.dev.dto.respone.UserResponse;
 import ra.dev.model.entity.User;
 import ra.dev.dto.request.LoginRequest;
 import ra.dev.dto.request.SignupRequest;
 import ra.dev.dto.respone.JwtResponse;
 
-import java.util.List;
+import java.util.Map;
 
 public interface UserService {
 
     boolean existsByEmail(String email);
     boolean saveOrUpdate(SignupRequest signupRequest);
-    List<User> findAll();
+    Map<String, Object> findAll(Pageable pageable);
+    Map<String, Object> softByName(String direction, int size, int page);
 
     User findByEmail(String email);
 
     User findByID(int userID);
+    UserResponse getUserByID(int userID);
 
-    void delete(int userID);
+    boolean delete(int userID, String action);
 
-    List<User> searchByName(String userName);
+    Map<String, Object> searchByName(String userName, Pageable pageable);
 
     User findByUserName(String userName);
 
