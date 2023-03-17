@@ -3,6 +3,7 @@ package ra.dev.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ra.dev.dto.respone.GetProduct;
+import ra.dev.dto.respone.ProductSale;
 import ra.dev.model.entity.Color;
 import ra.dev.model.entity.Product;
 import ra.dev.model.entity.ProductDetail;
@@ -28,5 +29,10 @@ public class ProductController {
                                           @RequestParam String sizeName) {
         return productService.sortAndFilter(direcion, colorName, sizeName);
     }
+    @GetMapping("getBestSale")
+    public List<ProductSale> getProductBestSale(){
+        return productService.getBestSale();
+    }
+
 
 }
