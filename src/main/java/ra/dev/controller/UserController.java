@@ -6,6 +6,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ra.dev.model.entity.User;
 import ra.dev.model.service.UserService;
+import ra.dev.payload.request.LoginRequest;
+import ra.dev.payload.request.SignupRequest;
+import ra.dev.payload.response.MessageResponse;
 import ra.dev.dto.request.LoginRequest;
 import ra.dev.dto.request.SignupRequest;
 import ra.dev.validation.Validate;
@@ -18,19 +21,21 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
     @GetMapping("/getToken")
     public ResponseEntity<?> sendEmail(@RequestParam("email") String email) {
         boolean gettoken = userService.getToken(email);
-        if (gettoken){
+        if (gettoken) {
             return ResponseEntity.ok("Send email successfully");
-        }else {
+        } else {
             return ResponseEntity.ok("Failed");
         }
 
     }
+
     @PostMapping("/resetPass")
     public User resetPass(@RequestParam("token") String token, @RequestBody String newPass) {
-        return userService.resetPass(token,newPass);
+        return userService.resetPass(token, newPass);
     }
 
     @PostMapping("register")
@@ -73,4 +78,6 @@ public class UserController {
             return ResponseEntity.badRequest().body("Action failed!");
         }
     }
+
+
 }

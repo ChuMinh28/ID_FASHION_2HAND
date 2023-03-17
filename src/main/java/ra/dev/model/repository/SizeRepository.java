@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 import ra.dev.model.entity.Size;
 @Repository
 public interface SizeRepository extends JpaRepository<Size,Integer> {
+    Size findSizeBySizeName(String sizeName);
 }
