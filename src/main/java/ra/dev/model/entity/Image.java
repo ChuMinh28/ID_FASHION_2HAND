@@ -23,8 +23,5 @@ public class Image {
     @JsonIgnore
     private Product product;
 
-    @Override
-    public String toString() {
-        return this.imageLink;
-    }
+
 }

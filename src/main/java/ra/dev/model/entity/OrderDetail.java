@@ -1,5 +1,6 @@
 package ra.dev.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -18,10 +19,17 @@ public class OrderDetail {
     private int price;
     @Column(name = "TotalAmount")
     private int totalAmount;
+    @Column(name = "Color")
+    private String color;
+    @Column(name = "Size")
+    private String size;
     @ManyToOne
+    @JsonIgnore
+
     @JoinColumn(name = "productID")
     private Product product;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "orderID")
     private Order order;
 

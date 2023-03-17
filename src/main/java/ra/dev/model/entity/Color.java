@@ -1,8 +1,7 @@
 package ra.dev.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,7 +9,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "Color")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Color {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +26,5 @@ public class Color {
     @JsonIgnore
     private List<ProductDetail> productDetails = new ArrayList<>();
 
-    @Override
-    public String toString() {
-        return this.colorName;
-    }
+
 }
