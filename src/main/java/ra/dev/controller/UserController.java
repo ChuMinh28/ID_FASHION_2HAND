@@ -11,6 +11,7 @@ import ra.dev.dto.respone.GetAllUserResponse;
 import ra.dev.dto.respone.UserResponse;
 import ra.dev.model.entity.User;
 import ra.dev.model.service.UserService;
+
 import ra.dev.dto.request.LoginRequest;
 import ra.dev.dto.request.SignupRequest;
 import ra.dev.validation.Validate;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
+
 
     @GetMapping("/getToken")
     public ResponseEntity<?> sendEmail(@RequestParam("email") String email) {
@@ -87,6 +89,7 @@ public class UserController {
             return ResponseEntity.badRequest().body("Action failed!");
         }
     }
+
 
     @PatchMapping("changeUserStatus/{userID}")
     public ResponseEntity<?> changeUserStatus(@PathVariable("userID") int userID, @RequestParam("action") String action) {
