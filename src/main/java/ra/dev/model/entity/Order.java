@@ -1,9 +1,12 @@
 package ra.dev.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Orders")
@@ -27,8 +30,12 @@ public class Order {
     @Column(name = "TotalAmount")
     private int totalAmount;
     @Column(name = "OrderStatus")
-    private boolean orderStatus;
+    private int orderStatus;
     @ManyToOne
     @JoinColumn(name = "userID")
     private User user;
+    @OneToMany(mappedBy = "order")
+    @JsonIgnore
+    private List<OrderDetail> listOrderDetail = new ArrayList<>();
+
 }
