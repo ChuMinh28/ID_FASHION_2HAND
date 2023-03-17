@@ -15,10 +15,13 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail,Int
     List<ProductDetail> findProductDetailByProductGender(Boolean status);
     List<ProductDetail> findProductDetailByColorColorIDAndProductGender(int colorID, Boolean status);
     List<ProductDetail> findProductDetailBySizeSizeIDAndProductGender(int sizeID, Boolean status);
+
     List<ProductDetail> findProductDetailByColorColorIDAndProductProductID(int colorID,int productID);
     List<ProductDetail> findProductDetailBySizeSizeIDAndProductProductID(int sizeID, int productID);
     ProductDetail findProductDetailBySizeSizeIDAndColorColorIDAndProductProductID(int sizeID, int colorID, int productID);
 
+
+    List<ProductDetail> findProductDetailByProductLimited(Boolean status);
 
 
 }
