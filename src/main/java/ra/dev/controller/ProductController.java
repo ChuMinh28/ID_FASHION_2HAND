@@ -44,5 +44,13 @@ public class ProductController {
         return productService.getByGender(direction,colorName,sizeName,sex);
     }
 
+    @GetMapping("getByFilter")
+    public List<GetProduct> getByFilter(
+            @RequestParam String colorName,
+            @RequestParam String sizeName
+    ){
+        return productService.getByFilter(colorName,sizeName);
+    }
+
 
 }

@@ -167,4 +167,39 @@ public class ProductServiceImp implements ProductService {
             return list;
         }
     }
+
+    @Override
+    public List<GetProduct> getByFilter(String color, String size) {
+        try {
+            List<ProductDetail> productDetailList = new ArrayList<>();
+            if(color.equals("0")){
+                Size sizeFind = sizeRepository.findSizeBySizeName(size);
+                productDetailList = productDetailRepository.findProductDetailBySizeSizeID(sizeFind.getSizeID());
+            }else {
+                Color colorFind = colorRepository.findColorByColorName(color);
+                productDetailList = productDetailRepository.findProductDetailByColorColorID(colorFind.getColorID());
+            }
+            List<GetProduct> productList = new ArrayList<>();
+            for (ProductDetail productDetail: productDetailList) {
+                Product product = productRepository.findProductByListProductDetailContaining(productDetail);
+                GetProduct getProduct = new GetProduct(
+                        product.getProductID(),
+                        product.getProductName(),
+                        product.getImage(),
+                        product.getTitle(),
+                        product.getPrice());
+                if(productList.contains(getProduct)){
+                    continue;
+                }else {
+                    productList.add(getProduct);
+                }
+            }
+
+            return productList;
+        }catch (Exception e){
+            e.printStackTrace();
+            List<GetProduct> list = new ArrayList<>();
+            return list;
+        }
+    }
 }
