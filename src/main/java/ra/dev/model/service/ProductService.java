@@ -14,5 +14,6 @@ public interface ProductService {
     List<GetProduct> getByGender(String direction, String color, String size, String sex);
 
     List<GetProduct> getByFilter(String color, String size);
+    List<GetProduct> getProductLimited();
 
 }

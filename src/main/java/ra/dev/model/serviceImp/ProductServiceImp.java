@@ -202,4 +202,25 @@ public class ProductServiceImp implements ProductService {
             return list;
         }
     }
+
+    @Override
+    public List<GetProduct> getProductLimited() {
+        List<ProductDetail> productDetailList = productDetailRepository.findProductDetailByProductLimited(true);
+        List<GetProduct> productList = new ArrayList<>();
+        for (ProductDetail productDetail: productDetailList) {
+            Product product = productRepository.findProductByListProductDetailContaining(productDetail);
+            GetProduct getProduct = new GetProduct(
+                    product.getProductID(),
+                    product.getProductName(),
+                    product.getImage(),
+                    product.getTitle(),
+                    product.getPrice());
+            if(productList.contains(getProduct)){
+                continue;
+            }else {
+                productList.add(getProduct);
+            }
+        }
+        return productList;
+    }
 }
