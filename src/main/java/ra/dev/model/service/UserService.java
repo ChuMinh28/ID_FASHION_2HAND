@@ -17,6 +17,7 @@ public interface UserService {
     boolean saveOrUpdate(SignupRequest signupRequest);
     Map<String, Object> findAll(Pageable pageable);
     Map<String, Object> softByName(String direction, int size, int page);
+    Map<String, Object> searchByName(String userName, Pageable pageable);
 
     User findByEmail(String email);
 
@@ -24,8 +25,6 @@ public interface UserService {
     UserResponse getUserByID(int userID);
 
     boolean delete(int userID, String action);
-
-    Map<String, Object> searchByName(String userName, Pageable pageable);
 
     User findByUserName(String userName);
 
