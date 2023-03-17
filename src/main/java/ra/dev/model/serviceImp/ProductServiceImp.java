@@ -116,4 +116,55 @@ public class ProductServiceImp implements ProductService {
         }
         return productSales;
     }
+
+    @Override
+    public List<GetProduct> getByGender(String direction, String color, String size, String sex) {
+        try {
+            Boolean getSex ;
+            if(sex.equals("men")){
+                getSex = true;
+            }else {
+                getSex = false;
+            }
+            List<ProductDetail> productDetailList = new ArrayList<>();
+            if(color.equals("0")&&size.equals("0")){
+                productDetailList = productDetailRepository.findProductDetailByProductGender(getSex);
+            }else if(size.equals("0")) {
+                Color colorFind = colorRepository.findColorByColorName(color);
+                productDetailList = productDetailRepository.findProductDetailByColorColorIDAndProductGender(colorFind.getColorID(),getSex);
+            }else {
+                Size sizeFind = sizeRepository.findSizeBySizeName(size);
+                productDetailList = productDetailRepository.findProductDetailBySizeSizeIDAndProductGender(sizeFind.getSizeID(),getSex);            }
+            List<GetProduct> productList = new ArrayList<>();
+            for (ProductDetail productDetail: productDetailList) {
+                Product product = productRepository.findProductByListProductDetailContaining(productDetail);
+                GetProduct getProduct = new GetProduct(
+                        product.getProductID(),
+                        product.getProductName(),
+                        product.getImage(),
+                        product.getTitle(),
+                        product.getPrice());
+                if(productList.contains(getProduct)){
+                    continue;
+                }else {
+                    productList.add(getProduct);
+                }
+            }
+            Collections.sort(productList, new Comparator<GetProduct>() {
+                @Override
+                public int compare(GetProduct u1, GetProduct u2) {
+                    if(direction.equals("asc")){
+                        return u1.getPrice() - u2.getPrice();
+                    }else {
+                        return u2.getPrice() - u1.getPrice();
+                    }
+                }
+            });
+            return productList;
+        }catch (Exception e){
+            e.printStackTrace();
+            List<GetProduct> list = new ArrayList<>();
+            return list;
+        }
+    }
 }

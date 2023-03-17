@@ -11,4 +11,9 @@ import java.util.List;
 public interface ProductDetailRepository extends JpaRepository<ProductDetail,Integer> {
     List<ProductDetail> findProductDetailByColorColorID(int colorID);
     List<ProductDetail> findProductDetailBySizeSizeID(int sizeID);
+    List<ProductDetail> findProductDetailByProductGender(Boolean status);
+    List<ProductDetail> findProductDetailByColorColorIDAndProductGender(int colorID, Boolean status);
+    List<ProductDetail> findProductDetailBySizeSizeIDAndProductGender(int sizeID, Boolean status);
+
+
 }
