@@ -1,6 +1,7 @@
 package ra.dev.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -23,8 +24,8 @@ public class Color {
     @JsonIgnore
     private List<ProductDetail> productDetails = new ArrayList<>();
 
-    @Override
-    public String toString() {
-        return this.colorName;
-    }
+//    @Override
+//    public String toString() {
+//        return this.colorName;
+//    }
 }

@@ -1,7 +1,7 @@
 package ra.dev.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -9,7 +9,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "Sizes")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Size {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +25,8 @@ public class Size {
     @OneToMany(mappedBy = "size")
     @JsonIgnore
     private List<ProductDetail> productDetails = new ArrayList<>();
-    @Override
-    public String toString() {
-        return this.sizeName;
-    }
+//    @Override
+//    public String toString() {
+//        return this.sizeName;
+//    }
 }

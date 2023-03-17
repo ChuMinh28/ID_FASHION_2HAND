@@ -1,12 +1,15 @@
 package ra.dev.model.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "Catalog")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Catalog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

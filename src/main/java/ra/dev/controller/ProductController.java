@@ -1,7 +1,11 @@
 package ra.dev.controller;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ra.dev.dto.respone.GetProduct;
+import ra.dev.model.entity.Color;
+import ra.dev.model.entity.Product;
+import ra.dev.model.entity.ProductDetail;
 import ra.dev.model.service.ProductService;
 
 import java.util.List;
@@ -12,9 +16,17 @@ import java.util.List;
 public class ProductController {
     @Autowired
     ProductService productService;
+
     @GetMapping()
-    public List<GetProduct> productList(){
+    public List<GetProduct> productList() {
         return productService.getAll();
+    }
+
+    @GetMapping("/sortAndFilter")
+    public List<GetProduct> sortAndFilter(@RequestParam String direcion,
+                                          @RequestParam String colorName,
+                                          @RequestParam String sizeName) {
+        return productService.sortAndFilter(direcion, colorName, sizeName);
     }
 
 }

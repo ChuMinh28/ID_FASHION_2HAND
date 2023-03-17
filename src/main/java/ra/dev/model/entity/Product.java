@@ -1,6 +1,6 @@
 package ra.dev.model.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,7 +8,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "Product")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
