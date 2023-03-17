@@ -34,5 +34,31 @@ public class ProductController {
         return productService.getBestSale();
     }
 
+    @GetMapping("getProductByGender")
+    public List<GetProduct> getByGender(
+            @RequestParam String direction,
+            @RequestParam String colorName,
+            @RequestParam String sizeName,
+            @RequestParam String sex
+    ){
+        return productService.getByGender(direction,colorName,sizeName,sex);
+    }
+
+    @GetMapping("getByFilter")
+    public List<GetProduct> getByFilter(
+            @RequestParam String colorName,
+            @RequestParam String sizeName
+    ){
+        return productService.getByFilter(colorName,sizeName);
+    }
+    @GetMapping("getListLimited")
+    public List<GetProduct> getProductLimited(){
+        return productService.getProductLimited();
+    }
+
+
+
+
+
 
 }

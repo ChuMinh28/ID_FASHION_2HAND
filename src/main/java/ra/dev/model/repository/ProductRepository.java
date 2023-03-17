@@ -5,10 +5,10 @@ import org.springframework.stereotype.Repository;
 import ra.dev.model.entity.Product;
 import ra.dev.model.entity.ProductDetail;
 
-import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Integer> {
     Product findProductByListProductDetailContaining(ProductDetail productDetail);
+    Product findProductByListProductDetailContainingAndGender(ProductDetail productDetail, Boolean status);
 
 }
