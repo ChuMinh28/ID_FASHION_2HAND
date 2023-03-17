@@ -1,9 +1,7 @@
 package ra.dev.model.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
-import ra.dev.model.entity.Color;
 import ra.dev.model.entity.ProductDetail;
 
 import java.util.List;
@@ -19,6 +17,4 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail,Int
     List<ProductDetail> findProductDetailBySizeSizeIDAndProductProductID(int sizeID, int productID);
     ProductDetail findProductDetailBySizeSizeIDAndColorColorIDAndProductProductID(int sizeID, int colorID, int productID);
     List<ProductDetail> findProductDetailByProductLimited(Boolean status);
-
-
 }

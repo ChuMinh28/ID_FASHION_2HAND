@@ -1,9 +1,9 @@
 package ra.dev.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import ra.dev.dto.respone.OrderResponse;
 import ra.dev.model.service.OrderService;
 
 @CrossOrigin(origins = "http://localhost:8080")
@@ -12,4 +12,19 @@ import ra.dev.model.service.OrderService;
 public class OrderController {
     @Autowired
     OrderService orderService;
+
+    @GetMapping("getUserOrder/{orderID}")
+    public OrderResponse getUserOrder(@PathVariable("orderID") int orderID) {
+        return orderService.getUserOrder(orderID);
+    }
+
+    @PatchMapping("changeOrderStatus/{orderID}")
+    public ResponseEntity<?> changeOrderStatus(@PathVariable("orderID") int orderID, @RequestParam("action") String action) {
+        boolean check = orderService.changeOrderStatus(orderID,action);
+        if (check) {
+            return ResponseEntity.ok("Action successfully!");
+        } else {
+            return ResponseEntity.badRequest().body("Action failed!");
+        }
+    }
 }
