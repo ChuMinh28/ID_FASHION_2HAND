@@ -86,8 +86,6 @@ public class OrderDetailServiceImp implements OrderDetailService {
             orderDetailRepository.save(orderDetail);
         }
         return orderDetail;
-
-
     }
 
     @Override
@@ -111,6 +109,7 @@ public class OrderDetailServiceImp implements OrderDetailService {
             orderDetailRepository.save(orderDetail);
             return true;
         }catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

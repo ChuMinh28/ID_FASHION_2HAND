@@ -12,6 +12,7 @@ import ra.dev.model.service.OrderDetailService;
 import ra.dev.model.service.OrderService;
 import ra.dev.model.service.UserService;
 
+
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/api/v1/order")
@@ -48,9 +49,14 @@ public class OrderController {
        }
    }
 
-    @GetMapping("getUserOrder/{orderID}")
-    public OrderResponse getUserOrder(@PathVariable("orderID") int orderID) {
-        return orderService.getUserOrder(orderID);
+    @GetMapping("getUserOrder")
+    public ResponseEntity<?> getUserOrder() {
+       OrderResponse orderResponse = orderService.getUserOrder();
+       if (orderResponse!=null) {
+           return ResponseEntity.ok(orderResponse);
+       } else {
+           return ResponseEntity.ok("Cart is empty!");
+       }
     }
 
     @PatchMapping("changeOrderStatus/{orderID}")

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import ra.dev.dto.request.UpdateUserRequest;
 import ra.dev.dto.respone.UserResponse;
 import ra.dev.model.entity.User;
 import ra.dev.model.service.UserService;
@@ -64,6 +65,16 @@ public class UserController {
         }
     }
 
+    @PatchMapping("UpdateUserAddress")
+    public ResponseEntity<?> updateUserAddress(@RequestBody UpdateUserRequest updateUserRequest) {
+        boolean check = userService.updateUserAddress(updateUserRequest);
+        if (check) {
+            return ResponseEntity.ok("Update address successfully!");
+        } else {
+            return ResponseEntity.badRequest().body("Update failed!");
+        }
+    }
+
     @PostMapping("signIn")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         if (userService.existsByUserName(loginRequest.getUserName())) {
@@ -118,7 +129,7 @@ public class UserController {
     public ResponseEntity<?> getAllUser(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page,size);
+        Pageable pageable = PageRequest.of(page, size);
         Map<String, Object> list = userService.findAll(pageable);
         return ResponseEntity.ok(list);
     }
@@ -137,7 +148,7 @@ public class UserController {
             @RequestParam("fullName") String fullName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page,size);
+        Pageable pageable = PageRequest.of(page, size);
         Map<String, Object> list = userService.searchByName(fullName, pageable);
         return ResponseEntity.ok(list);
     }
@@ -154,7 +165,7 @@ public class UserController {
         } else {
             order = new Sort.Order(Sort.Direction.DESC, "FullName");
         }
-        Pageable pageable = PageRequest.of(page,size,Sort.by(order));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(order));
         Map<String, Object> list = userService.searchByName(fullName, pageable);
         return ResponseEntity.ok(list);
     }
