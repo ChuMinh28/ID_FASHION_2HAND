@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ra.dev.dto.request.UpdateUserRequest;
 import ra.dev.dto.respone.GetAllUserResponse;
 import ra.dev.dto.respone.UserResponse;
 import ra.dev.model.entity.ERole;
@@ -30,7 +30,6 @@ import ra.dev.dto.request.LoginRequest;
 import ra.dev.dto.request.SignupRequest;
 import ra.dev.dto.respone.JwtResponse;
 import ra.dev.security.CustomUserDetails;
-import ra.dev.validation.Validate;
 
 
 import java.util.*;
@@ -109,16 +108,6 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    @Override
-    public User findByID(int userID) {
-        return userRepository.findById(userID).get();
-    }
-
-    @Override
     public UserResponse getUserByID(int userID) {
         try {
             User user = userRepository.findById(userID).get();
@@ -176,6 +165,20 @@ public class UserServiceImp implements UserService {
             userRepository.save(user);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateUserAddress(UpdateUserRequest userRequest) {
+        try {
+            CustomUserDetails customUserDetail = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            User user = userRepository.findById(customUserDetail.getUserId()).get();
+            user.setAddress(userRequest.getAddress());
+            userRepository.save(user);
+            return true;
+        }catch (Exception e) {
             e.printStackTrace();
             return false;
         }

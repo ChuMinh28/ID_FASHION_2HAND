@@ -37,7 +37,7 @@ public class User {
     private boolean userStatus;
     @OneToMany(mappedBy = "user")
     private List<Order> listOrder = new ArrayList<>();
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "User_Role", joinColumns = @JoinColumn(name = "userID"), inverseJoinColumns = @JoinColumn(name = "roleId"))
     private Set<Roles> listRoles = new HashSet<>();
 }
