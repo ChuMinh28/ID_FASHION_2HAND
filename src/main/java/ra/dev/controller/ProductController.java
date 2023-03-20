@@ -9,9 +9,11 @@ import ra.dev.dto.respone.ProductDetailGet;
 import ra.dev.dto.respone.ProductSale;
 import ra.dev.model.entity.Product;
 import ra.dev.model.entity.ProductDetail;
+
 import ra.dev.model.service.ProductService;
 
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
@@ -73,7 +75,14 @@ public class ProductController {
     }
 
 
-
+    @GetMapping("/getProductByCatalog/{catalogID}")
+    public Map<String,Object> getProductByCatalog(@PathVariable("catalogID") int catalogID,
+                                                   @RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "3") int size,
+                                                   @RequestParam("direction") String direction,
+                                                   @RequestParam("sortBy") String sortBy){
+        return productService.findProductByListCatalogContaining(catalogID,page,size,direction,sortBy);
+    }
 
 
 

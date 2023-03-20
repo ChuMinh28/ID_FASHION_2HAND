@@ -7,7 +7,11 @@ import ra.dev.dto.respone.ProductSale;
 import ra.dev.model.entity.Product;
 import ra.dev.model.entity.ProductDetail;
 
+import ra.dev.model.entity.Catalog;
+import ra.dev.model.entity.Product;
+
 import java.util.List;
+import java.util.Map;
 
 public interface ProductService {
     List<GetProduct> getAll();
@@ -20,4 +24,6 @@ public interface ProductService {
     Product createProduct(Product createProduct);
     Product updateProduct(int productID, Product updateProduct);
 
+    Map<String, Object> findProductByListCatalogContaining(int id , int page, int size, String direction,String sortBy);
+ 
 }
