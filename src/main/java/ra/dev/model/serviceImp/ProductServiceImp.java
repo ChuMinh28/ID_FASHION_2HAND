@@ -30,8 +30,7 @@ public class ProductServiceImp implements ProductService {
     ColorRepository colorRepository;
     @Autowired
     SizeRepository sizeRepository;
-    @Autowired
-    CatalogRepository catalogRepository;
+
     @Autowired
     ImageRepository imageRepository;
     @Override
