@@ -25,5 +25,8 @@ public class Size {
     @OneToMany(mappedBy = "size")
     @JsonIgnore
     private List<ProductDetail> productDetails = new ArrayList<>();
-
+    @Override
+    public String toString(){
+        return this.getSizeName();
+    }
 }

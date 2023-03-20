@@ -22,6 +22,9 @@ public class Image {
     @JoinColumn(name = "ProductID")
     @JsonIgnore
     private Product product;
-
+//    @Override
+//    public String toString(){
+//        return this.getImageLink();
+//    }
 
 }
