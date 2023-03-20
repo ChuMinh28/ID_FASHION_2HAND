@@ -6,6 +6,7 @@ import ra.dev.model.entity.ProductDetail;
 import ra.dev.model.entity.Size;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProductDetailService {
     List<Size> getListSize(int colorID,int productID);
@@ -14,6 +15,6 @@ public interface ProductDetailService {
 
     ProductDetail createProductDetail(CreateProductDetail createProductDetail);
     ProductDetail updateProductDetail(int productDetailID,CreateProductDetail createProductDetail);
-
+    Map<String,Object> getPagging(int page, int size,String direction,String sortBy);
 
 }
