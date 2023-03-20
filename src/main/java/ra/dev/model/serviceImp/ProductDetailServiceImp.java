@@ -35,7 +35,6 @@ public class ProductDetailServiceImp implements ProductDetailService {
         }
         return colorList;
     }
-
     @Override
     public ProductDetail getDetail(int sizeID, int ColorID,int productID) {
         return productDetailRepository.findProductDetailBySizeSizeIDAndColorColorIDAndProductProductID(sizeID,ColorID,productID);

@@ -1,10 +1,14 @@
 package ra.dev.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ra.dev.dto.request.OrderCreate;
 import ra.dev.dto.request.OrderRequest;
+import ra.dev.dto.respone.OrderRecentResponse;
 import ra.dev.dto.respone.OrderResponse;
 
 import ra.dev.dto.request.CartCreate;
@@ -57,11 +61,31 @@ public class OrderController {
 
     @GetMapping("getUserOrder")
     public ResponseEntity<?> getUserOrder() {
-       OrderResponse orderResponse = orderService.getUserOrder();
-       if (orderResponse!=null) {
-           return ResponseEntity.ok(orderResponse);
-       } else {
-           return ResponseEntity.ok("Cart is empty!");
+       try {
+           OrderResponse orderResponse = orderService.getUserOrder();
+           if (orderResponse != null) {
+               return ResponseEntity.ok(orderResponse);
+           } else {
+               return ResponseEntity.ok("Cart is empty!");
+           }
+       }catch (Exception e) {
+           e.printStackTrace();
+           return ResponseEntity.badRequest().body("Error!");
+       }
+    }
+
+    @GetMapping("recentOrder")
+    public ResponseEntity<?> getRecentOrder(@RequestParam(defaultValue = "5") int size) {
+       try {
+           List<OrderRecentResponse> list = orderService.orderRecent(size);
+           if (list != null) {
+               return ResponseEntity.ok(list);
+           } else {
+               return ResponseEntity.ok("You currently have no orders!");
+           }
+       }catch (Exception e) {
+           e.printStackTrace();
+           return ResponseEntity.badRequest().body("Error!!!");
        }
     }
 

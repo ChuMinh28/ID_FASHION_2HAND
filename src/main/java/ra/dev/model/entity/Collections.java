@@ -1,8 +1,11 @@
 package ra.dev.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Collection")
@@ -19,9 +22,10 @@ public class Collections {
     private String collectionName;
     @Column(name = "CollectionStatus")
     private boolean collectionStatus;
+    @Override
+    public String toString(){
+        return this.getCollectionName();
+    }
 
-//    @Override
-//    public String toString() {
-//        return this.collectionName;
-//    }
+
 }
