@@ -3,8 +3,11 @@ package ra.dev.model.service;
 import ra.dev.dto.respone.GetProduct;
 import ra.dev.dto.respone.ProductDetailGet;
 import ra.dev.dto.respone.ProductSale;
+import ra.dev.model.entity.Catalog;
+import ra.dev.model.entity.Product;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProductService {
     List<GetProduct> getAll();
@@ -15,5 +18,5 @@ public interface ProductService {
     List<GetProduct> getByFilter(String color, String size);
     List<GetProduct> getProductLimited();
     ProductDetailGet getDetail(int productID);
-
+    Map<String, Object> findProductByListCatalogContaining(int id , int page, int size, String direction,String sortBy);
 }
