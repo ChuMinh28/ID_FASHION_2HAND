@@ -19,4 +19,8 @@ public class Catalog {
     private String catalogName;
     @Column(name = "CatalogStatus")
     private boolean catalogStatus;
+    @Override
+    public String toString(){
+        return this.getCatalogName();
+    }
 }

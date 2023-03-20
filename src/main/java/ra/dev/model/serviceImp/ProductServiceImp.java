@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ra.dev.dto.request.CreateProduct;
 import ra.dev.dto.respone.GetProduct;
 import ra.dev.dto.respone.ProductDetailGet;
 import ra.dev.dto.respone.ProductSale;
@@ -29,6 +30,10 @@ public class ProductServiceImp implements ProductService {
     ColorRepository colorRepository;
     @Autowired
     SizeRepository sizeRepository;
+    @Autowired
+    CatalogRepository catalogRepository;
+    @Autowired
+    ImageRepository imageRepository;
     @Override
     public List<GetProduct> getAll() {
         List<Product> productList = productRepository.findAll();
@@ -247,6 +252,80 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
+    public Product createProduct(Product createProduct) {
+        List<Catalog> catalogList = new ArrayList<>();
+        for (int i = 0; i < createProduct.getListCatalog().size(); i++) {
+            if(catalogRepository.findCatalogByCatalogName(String.valueOf(createProduct.getListCatalog().get(i)))!=null){
+                Catalog catalgoFind = catalogRepository.findCatalogByCatalogName(String.valueOf(createProduct.getListCatalog().get(i)));
+                catalogList.add(catalgoFind);
+            }else {
+                Catalog catalog = new Catalog();
+                catalog.setCatalogName(String.valueOf(createProduct.getListCatalog().get(i)));
+                catalog.setCatalogStatus(true);
+                catalogList.add(catalogRepository.save(catalog));
+            }
+        }
+
+        Product product = new Product();
+        product.setProductName(createProduct.getProductName());
+        product.setPrice(createProduct.getPrice());
+        product.setProductStatus(true);
+        product.setTitle(createProduct.getTitle());
+        product.setDescription(createProduct.getDescription());
+        product.setGender(createProduct.isGender());
+        product.setLimited(createProduct.isLimited());
+        product.setImage(createProduct.getImage());
+        product.setShipping(createProduct.isShipping());
+        product.setListCatalog(catalogList);
+        productRepository.save(product);
+        for (int i = 0; i < createProduct.getListImage().size(); i++) {
+            Image subImage = new Image();
+            subImage.setImageLink(String.valueOf(createProduct.getListImage().get(i).getImageLink()));
+            subImage.setProduct(product);
+            imageRepository.save(subImage);
+        }
+        return product;
+    }
+
+    @Override
+    public Product updateProduct(int productID, Product updateProduct) {
+        List<Image> imageList = imageRepository.findByProductProductID(productID);
+        for (Image image: imageList) {
+            imageRepository.deleteById(image.getImageID());
+        }
+        List<Catalog> catalogListUpdate = new ArrayList<>();
+        for (int i = 0; i < updateProduct.getListCatalog().size(); i++) {
+            if(catalogRepository.findCatalogByCatalogName(String.valueOf(updateProduct.getListCatalog().get(i)))!=null){
+                Catalog catalgoFind = catalogRepository.findCatalogByCatalogName(String.valueOf(updateProduct.getListCatalog().get(i)));
+                catalogListUpdate.add(catalgoFind);
+            }else {
+                Catalog catalog = new Catalog();
+                catalog.setCatalogName(String.valueOf(updateProduct.getListCatalog().get(i)));
+                catalog.setCatalogStatus(true);
+                catalogListUpdate.add(catalogRepository.save(catalog));
+            }
+        }
+        Product productUpdate = productRepository.findById(productID).get() ;
+        productUpdate.setProductName(updateProduct.getProductName());
+        productUpdate.setPrice(updateProduct.getPrice());
+        productUpdate.setProductStatus(true);
+        productUpdate.setTitle(updateProduct.getTitle());
+        productUpdate.setDescription(updateProduct.getDescription());
+        productUpdate.setGender(updateProduct.isGender());
+        productUpdate.setLimited(updateProduct.isLimited());
+        productUpdate.setImage(updateProduct.getImage());
+        productUpdate.setShipping(updateProduct.isShipping());
+        productUpdate.setListCatalog(catalogListUpdate);
+        productRepository.save(productUpdate);
+        for (int i = 0; i < updateProduct.getListImage().size(); i++) {
+            Image subImage = new Image();
+            subImage.setImageLink(String.valueOf(updateProduct.getListImage().get(i).getImageLink()));
+            subImage.setProduct(productUpdate);
+            imageRepository.save(subImage);
+        }
+        return productUpdate;
+
+    }
     public Map<String, Object> findProductByListCatalogContaining(int id, int page, int size, String direction, String sortBy) {
         Catalog catalog=catalogRepository.findById(id).get();
         Pageable pageable;

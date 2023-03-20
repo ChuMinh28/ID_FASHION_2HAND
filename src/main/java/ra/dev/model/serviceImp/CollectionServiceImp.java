@@ -34,7 +34,9 @@ public class CollectionServiceImp implements CollectionService {
     @Override
     public CollectionGet getByID(int collectionID) {
         Collections collections = collectionRepository.findById(collectionID).get();
+
         List<Product> productList = productRepository.findProductByListCollectionContaining(collections);
+
         CollectionGet collectionsNew = new CollectionGet();
         collectionsNew.setCollectionID(collections.getCollectionID());
         collectionsNew.setCollectionName(collections.getCollectionName());
