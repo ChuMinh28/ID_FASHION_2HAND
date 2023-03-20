@@ -25,6 +25,10 @@ public class Color {
     @OneToMany(mappedBy = "color")
     @JsonIgnore
     private List<ProductDetail> productDetails = new ArrayList<>();
+    @Override
+    public String toString(){
+        return this.getColorName();
+    }
 
 
 }

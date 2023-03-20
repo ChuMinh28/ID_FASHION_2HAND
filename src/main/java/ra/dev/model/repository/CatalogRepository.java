@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 import ra.dev.model.entity.Catalog;
 @Repository
 public interface CatalogRepository extends JpaRepository<Catalog,Integer> {
+    Catalog findCatalogByCatalogName(String catalogName);
 }

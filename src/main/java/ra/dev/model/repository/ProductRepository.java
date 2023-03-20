@@ -14,4 +14,5 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     Product findProductByListProductDetailContaining(ProductDetail productDetail);
     Product findProductByListProductDetailContainingAndGender(ProductDetail productDetail, Boolean status);
     List<Product> findProductByListCollectionContaining(Collections collections);
+
 }

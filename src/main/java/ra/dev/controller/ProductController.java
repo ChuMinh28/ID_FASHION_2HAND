@@ -2,9 +2,13 @@ package ra.dev.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ra.dev.dto.request.CreateProduct;
+import ra.dev.dto.request.CreateProductDetail;
 import ra.dev.dto.respone.GetProduct;
 import ra.dev.dto.respone.ProductDetailGet;
 import ra.dev.dto.respone.ProductSale;
+import ra.dev.model.entity.Product;
+import ra.dev.model.entity.ProductDetail;
 import ra.dev.model.service.ProductService;
 
 import java.util.List;
@@ -58,6 +62,16 @@ public class ProductController {
     public ProductDetailGet getProduct(@PathVariable("productID")int productID){
         return productService.getDetail(productID);
     }
+    @PostMapping("create")
+    public Product createProduct(@RequestBody Product createProduct){
+        return productService.createProduct(createProduct);
+    }
+
+    @PutMapping("updateProduct/{productID}")
+    public Product updateProduct(@PathVariable("productID") int productID, @RequestBody Product productUpdate){
+        return productService.updateProduct(productID,productUpdate);
+    }
+
 
 
 
