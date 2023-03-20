@@ -1,30 +1,30 @@
 package ra.dev.model.serviceImp;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ra.dev.dto.respone.GetProduct;
 import ra.dev.dto.respone.ProductDetailGet;
 import ra.dev.dto.respone.ProductSale;
-import ra.dev.model.entity.Color;
-import ra.dev.model.entity.Product;
-import ra.dev.model.entity.ProductDetail;
-import ra.dev.model.entity.Size;
-import ra.dev.model.repository.ColorRepository;
-import ra.dev.model.repository.ProductDetailRepository;
-import ra.dev.model.repository.ProductRepository;
-import ra.dev.model.repository.SizeRepository;
+import ra.dev.model.entity.*;
+import ra.dev.model.repository.*;
 import ra.dev.model.service.ProductService;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+
 @Service
 public class ProductServiceImp implements ProductService {
     @Autowired
     ProductRepository productRepository;
     @Autowired
     ProductDetailRepository productDetailRepository;
+
+    @Autowired
+    CatalogRepository catalogRepository;
     @Autowired
     ColorRepository colorRepository;
     @Autowired
@@ -245,4 +245,33 @@ public class ProductServiceImp implements ProductService {
         productDetailGet.setSizeList(sizeList);
         return productDetailGet;
     }
+
+    @Override
+    public Map<String, Object> findProductByListCatalogContaining(int id, int page, int size, String direction, String sortBy) {
+        Catalog catalog=catalogRepository.findById(id).get();
+        Pageable pageable;
+        if (sortBy.equalsIgnoreCase("name")){
+            if (direction.equalsIgnoreCase("asc")) {
+                pageable = PageRequest.of(page, size, Sort.by("ProductName").ascending());
+            } else {
+                pageable = PageRequest.of(page, size, Sort.by("ProductName").descending());
+            }
+        }else {
+            if (direction.equalsIgnoreCase("asc")) {
+                pageable = PageRequest.of(page, size, Sort.by("Price").ascending());
+            } else {
+                pageable = PageRequest.of(page, size, Sort.by("Price").descending());
+            }
+        }
+        Page<Product> productPage=productRepository.findProductByListCatalogContaining(catalog,pageable);
+        Map<String, Object> data = new HashMap<>();
+        data.put("Product", productPage.getContent());
+        data.put("Size", productPage.getSize());
+        data.put("TotalElement", productPage.getTotalElements());
+        data.put("TotalPage", productPage.getTotalPages());
+        return data;
+    }
+
+
+
 }
