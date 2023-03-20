@@ -17,6 +17,6 @@ public class Catalog {
     private int catalogID;
     @Column(name = "CatalogName")
     private String catalogName;
-    @Column(name = "catalogStatus")
+    @Column(name = "CatalogStatus")
     private boolean catalogStatus;
 }
