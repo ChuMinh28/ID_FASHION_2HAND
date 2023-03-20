@@ -33,14 +33,4 @@ public class ProductDetail {
     private Color color;
 
 
-
-
-//    @ManyToMany
-//    @JoinTable(name = "Product_Sizes", joinColumns = @JoinColumn(name = "productDetailID"), inverseJoinColumns = @JoinColumn(name = "sizesID"))
-//    private List<Size> listSizes;
-//    @ManyToMany
-//    @JoinTable(name = "Product_Color", joinColumns = @JoinColumn(name = "productDetailID"), inverseJoinColumns = @JoinColumn(name = "colorID"))
-//    private List<Color> listColor;
-
-
 }

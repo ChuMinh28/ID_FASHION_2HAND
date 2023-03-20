@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ra.dev.dto.respone.CollectionGet;
 import ra.dev.dto.respone.GetCollection;
-import ra.dev.model.entity.Catalog;
+
 import ra.dev.model.entity.Collections;
 import ra.dev.model.service.CollectionService;
 

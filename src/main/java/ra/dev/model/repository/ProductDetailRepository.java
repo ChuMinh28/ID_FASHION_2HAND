@@ -1,5 +1,7 @@
 package ra.dev.model.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ra.dev.model.entity.ProductDetail;
@@ -18,6 +20,5 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail,Int
     ProductDetail findProductDetailBySizeSizeIDAndColorColorIDAndProductProductID(int sizeID, int colorID, int productID);
     List<ProductDetail> findProductDetailByProductLimited(Boolean status);
     List<ProductDetail> findProductDetailByProductProductID(int productID);
-
 
 }
