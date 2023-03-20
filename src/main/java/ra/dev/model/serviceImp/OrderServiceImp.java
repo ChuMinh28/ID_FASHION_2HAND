@@ -1,9 +1,13 @@
 package ra.dev.model.serviceImp;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ra.dev.dto.respone.OrderDetailResponse;
+import ra.dev.dto.respone.OrderRecentResponse;
 import ra.dev.dto.respone.OrderResponse;
 import ra.dev.model.entity.Order;
 import ra.dev.model.entity.OrderDetail;
@@ -12,7 +16,10 @@ import ra.dev.model.repository.OrderRepository;
 import ra.dev.model.service.OrderService;
 import ra.dev.security.CustomUserDetails;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImp implements OrderService {
@@ -43,7 +50,6 @@ public class OrderServiceImp implements OrderService {
     @Override
     public OrderResponse getUserOrder() {
         CustomUserDetails customUserDetail = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        try {
             Order order = orderRepository.findByOrderStatusAndUser_UserID(1, customUserDetail.getUserId());
             OrderResponse orderResponse = new OrderResponse();
             List<OrderDetail> list = orderDetailRepository.findAllByOrder_OrderID(order.getOrderID());
@@ -63,8 +69,36 @@ public class OrderServiceImp implements OrderService {
             orderResponse.setTotalAmount(totalAmount);
             orderResponse.setShipping(false);
             return orderResponse;
-        } catch (Exception e) {
-            return null;
+    }
+
+    @Override
+    public List<OrderRecentResponse> orderRecent(int size) {
+        CustomUserDetails customUserDetail = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<Order> listOrder = orderRepository.findAllByUser_UserID(customUserDetail.getUserId());
+        List<OrderRecentResponse> list = new ArrayList<>();
+        for (Order order : listOrder) {
+            if (order.getOrderStatus() != 1) {
+                OrderRecentResponse orderRecentResponse = new OrderRecentResponse();
+                orderRecentResponse.setOrderID(order.getOrderID());
+                orderRecentResponse.setCreated(order.getOrderDate());
+                if (order.getOrderStatus() == 2) {
+                    orderRecentResponse.setOrderStatus("Pending");
+                }
+                if (order.getOrderStatus() == 3) {
+                    orderRecentResponse.setOrderStatus("Confirmed");
+                }
+                if (order.getOrderStatus() == 4) {
+                    orderRecentResponse.setOrderStatus("Complete");
+                }
+                orderRecentResponse.setPaymentMethod("Cash");
+                orderRecentResponse.setTotalAmount(order.getTotalAmount());
+                list.add(orderRecentResponse);
+            }
         }
+        List<OrderRecentResponse> listResponse = list.stream()
+                .sorted(Comparator.comparing(OrderRecentResponse::getCreated).reversed())
+                .limit(size)
+                .collect(Collectors.toList());
+        return listResponse;
     }
 }
