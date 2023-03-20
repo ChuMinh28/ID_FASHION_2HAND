@@ -3,15 +3,20 @@ package ra.dev.model.serviceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ra.dev.dto.request.OrderCreate;
 import ra.dev.dto.respone.OrderDetailResponse;
 import ra.dev.dto.respone.OrderResponse;
+import ra.dev.dto.respone.UserResponse;
 import ra.dev.model.entity.Order;
 import ra.dev.model.entity.OrderDetail;
+import ra.dev.model.entity.User;
 import ra.dev.model.repository.OrderDetailRepository;
 import ra.dev.model.repository.OrderRepository;
+import ra.dev.model.repository.UserRepository;
 import ra.dev.model.service.OrderService;
 import ra.dev.security.CustomUserDetails;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -20,6 +25,8 @@ public class OrderServiceImp implements OrderService {
     private OrderRepository orderRepository;
     @Autowired
     private OrderDetailRepository orderDetailRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public boolean changeOrderStatus(int orderID, String action) {
@@ -66,5 +73,31 @@ public class OrderServiceImp implements OrderService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public Order checkout(OrderCreate orderCreate) {
+        User users = userRepository.findById(orderCreate.getUserID()).get();
+        List<Order> listOrder = orderRepository.findOrderByOrderStatus(1);
+        boolean checkOrder = false;
+        Order newOrder = new Order();
+        for (Order orserST1 : listOrder) {
+            if (orserST1.getUser().getUserID() == orderCreate.getUserID()) {
+                checkOrder = true;
+                newOrder = orserST1;
+                break;
+            }
+        }
+        if (checkOrder) {
+            newOrder.setOrderDate(LocalDate.now());
+            newOrder.setAddress(orderCreate.getAddress());
+            newOrder.setEmail(orderCreate.getEmail());
+            newOrder.setOrderStatus(2);
+            newOrder.setFullName(orderCreate.getFullName());
+            newOrder.setTotalAmount(orderCreate.getTotalAmout());
+            newOrder.setUser(users);
+            orderRepository.save(newOrder);
+        }
+        return newOrder;
     }
 }

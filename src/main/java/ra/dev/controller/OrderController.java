@@ -3,14 +3,20 @@ package ra.dev.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ra.dev.dto.request.OrderCreate;
 import ra.dev.dto.request.OrderRequest;
 import ra.dev.dto.respone.OrderResponse;
 
 import ra.dev.dto.request.CartCreate;
+import ra.dev.model.entity.Order;
 import ra.dev.model.entity.OrderDetail;
+import ra.dev.model.entity.User;
 import ra.dev.model.service.OrderDetailService;
 import ra.dev.model.service.OrderService;
 import ra.dev.model.service.UserService;
+
+import java.time.LocalDate;
+import java.util.List;
 
 
 @CrossOrigin(origins = "http://localhost:8080")
@@ -68,4 +74,9 @@ public class OrderController {
             return ResponseEntity.badRequest().body("Action failed!");
         }
     }
+    @PostMapping("checkout")
+            public Order checkout(@RequestBody OrderCreate orderCreate){
+       return orderService.checkout(orderCreate);
+    }
+
 }
