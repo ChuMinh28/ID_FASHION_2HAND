@@ -8,7 +8,9 @@ import ra.dev.model.entity.Product;
 import java.util.List;
 
 @Repository
-public interface CollectionRepository extends JpaRepository<Collections,Integer> {
+public interface CollectionRepository extends JpaRepository<Collections, Integer> {
+    List<Collections> findByCollectionNameContaining(String name);
 
+    List<Collections> findByCollectionDescriptionContaining(String name);
 
 }
