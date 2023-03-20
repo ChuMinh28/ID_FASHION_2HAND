@@ -1,5 +1,6 @@
 package ra.dev.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -36,6 +37,7 @@ public class User {
     @Column(name = "UserStatus")
     private boolean userStatus;
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Order> listOrder = new ArrayList<>();
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "User_Role", joinColumns = @JoinColumn(name = "userID"), inverseJoinColumns = @JoinColumn(name = "roleId"))
