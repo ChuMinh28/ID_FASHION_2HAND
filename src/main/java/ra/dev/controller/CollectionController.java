@@ -1,11 +1,10 @@
 package ra.dev.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ra.dev.dto.respone.CollectionGet;
 import ra.dev.dto.respone.GetCollection;
+import ra.dev.model.entity.Collections;
 import ra.dev.model.service.CollectionService;
 
 import java.util.List;
@@ -19,5 +18,10 @@ public class CollectionController {
     @GetMapping()
     public List<GetCollection> getAll(){
         return collectionService.getAll();
+    }
+    @GetMapping("getCollection/{collectionID}")
+    public CollectionGet getCollection(@PathVariable("collectionID") int collectionID){
+        return collectionService.getByID(collectionID);
+
     }
 }
