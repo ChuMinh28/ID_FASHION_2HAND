@@ -67,7 +67,6 @@ public class OrderDetailServiceImp implements OrderDetailService {
                 orderDetail.setSize(productDetail.getSize().getSizeName());
                 orderDetail.setPrice(product.getPrice());
                 orderDetailRepository.save(orderDetail);
-
             }
         }else {
             Order order = new Order();

@@ -43,19 +43,17 @@ public class CollectionController {
         return ResponseEntity.ok("Lock Collections successfully!");
     }
 
-    @GetMapping("/searchCollection")
-    public List<Collections> searchCatalogByName(@RequestParam("name") String name ,@RequestParam("searchBy") String searchBy) {
-        return collectionService.searchCollectionsBy(searchBy,name);
-    }
 
-    @GetMapping("/sortCollectionsByName")
-    public List<Collections> sortCollectionsByName(@RequestParam("direction") String direction) {
-        return collectionService.sortCollectionsByCollectionsName(direction);
-    }
 
-    @GetMapping("/paginationCollections")
-    public Map<String, Object> paginationCollections(@RequestParam(defaultValue = "0") int page,
-                                                 @RequestParam(defaultValue = "3") int size,@RequestParam("direction") String direction) {
-        return collectionService.getPagging(page,size,direction);
+    @GetMapping("/action")
+    public Map<String, Object> paginationCatalog(@RequestParam(defaultValue = "0") String search,
+                                                 @RequestParam(defaultValue = "0") String sort,
+                                                 @RequestParam(defaultValue = "0") String pagination,
+                                                 @RequestParam("name") String name,
+                                                 @RequestParam("direction") String direction,
+                                                 @RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "3") int size
+    ) {
+        return collectionService.getPagging(search,sort,pagination,name,direction,page, size);
     }
 }
