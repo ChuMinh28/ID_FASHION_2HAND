@@ -17,5 +17,4 @@ public class ProductSale{
     private String color;
     private String size;
     private int discount;
-
 }

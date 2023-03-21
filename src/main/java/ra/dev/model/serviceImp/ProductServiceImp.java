@@ -43,7 +43,8 @@ public class ProductServiceImp implements ProductService {
                     product.getProductName(),
                     product.getImage(),
                     product.getTitle(),
-                    product.getPrice());
+                    product.getPrice(),
+                    product.getDiscount());
             getProductsList.add(getProduct);
         }
         return getProductsList;
@@ -67,7 +68,8 @@ public class ProductServiceImp implements ProductService {
                         product.getProductName(),
                         product.getImage(),
                         product.getTitle(),
-                        product.getPrice());
+                        product.getPrice(),
+                        product.getDiscount());
                 if(productList.contains(getProduct)){
                     continue;
                 }else {
@@ -98,7 +100,7 @@ public class ProductServiceImp implements ProductService {
         Collections.sort(productDetailList, new Comparator<ProductDetail>() {
             @Override
             public int compare(ProductDetail u1, ProductDetail u2) {
-                    return u2.getDiscount() - u1.getDiscount();
+                    return u2.getProduct().getDiscount() - u1.getProduct().getDiscount();
             }
         });
         List<ProductSale> productSales = new ArrayList<>();
@@ -112,7 +114,7 @@ public class ProductServiceImp implements ProductService {
                     product.getPrice(),
                     productDetail.getColor().getColorName(),
                     productDetail.getSize().getSizeName(),
-                    productDetail.getDiscount());
+                    productDetail.getProduct().getDiscount());
             if(productSales.contains(productSale)){
                 continue;
             }else {
@@ -148,7 +150,8 @@ public class ProductServiceImp implements ProductService {
                         product.getProductName(),
                         product.getImage(),
                         product.getTitle(),
-                        product.getPrice());
+                        product.getPrice(),
+                        product.getDiscount());
                 if(productList.contains(getProduct)){
                     continue;
                 }else {
@@ -192,7 +195,8 @@ public class ProductServiceImp implements ProductService {
                         product.getProductName(),
                         product.getImage(),
                         product.getTitle(),
-                        product.getPrice());
+                        product.getPrice(),
+                        product.getDiscount());
                 if(productList.contains(getProduct)){
                     continue;
                 }else {
@@ -219,7 +223,8 @@ public class ProductServiceImp implements ProductService {
                     product.getProductName(),
                     product.getImage(),
                     product.getTitle(),
-                    product.getPrice());
+                    product.getPrice(),
+                    product.getDiscount());
             if(productList.contains(getProduct)){
                 continue;
             }else {
@@ -268,6 +273,7 @@ public class ProductServiceImp implements ProductService {
         Product product = new Product();
         product.setProductName(createProduct.getProductName());
         product.setPrice(createProduct.getPrice());
+        product.setDiscount(createProduct.getDiscount());
         product.setProductStatus(true);
         product.setTitle(createProduct.getTitle());
         product.setDescription(createProduct.getDescription());
@@ -307,6 +313,7 @@ public class ProductServiceImp implements ProductService {
         Product productUpdate = productRepository.findById(productID).get() ;
         productUpdate.setProductName(updateProduct.getProductName());
         productUpdate.setPrice(updateProduct.getPrice());
+        productUpdate.setDiscount(updateProduct.getDiscount());
         productUpdate.setProductStatus(true);
         productUpdate.setTitle(updateProduct.getTitle());
         productUpdate.setDescription(updateProduct.getDescription());

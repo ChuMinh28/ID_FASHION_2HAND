@@ -1,6 +1,6 @@
 package ra.dev.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,6 +30,8 @@ public class Product {
     private String description;
     @Column(name = "Price")
     private int price;
+    @Column(name = "Discount")
+    private int discount;
     @Column(name = "Gender")
     private boolean gender;
     @Column(name = "Limited")
