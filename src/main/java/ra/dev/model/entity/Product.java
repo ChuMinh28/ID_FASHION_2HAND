@@ -32,6 +32,8 @@ public class Product {
     private int price;
     @Column(name = "Gender")
     private boolean gender;
+    @Column(name = "Discount")
+    private int discount;
     @Column(name = "Limited")
     private boolean limited;
     @Column(name = "Shipping")

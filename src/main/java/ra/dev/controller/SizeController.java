@@ -33,7 +33,7 @@ public class SizeController {
         }
     }
 
-    @PatchMapping("updateColor/{sizeID}")
+    @PatchMapping("updateSize/{sizeID}")
     public ResponseEntity<?> updateColor(@PathVariable("sizeID") int sizeID, @RequestBody Size size) {
         try {
             boolean check = sizeService.updateSize(sizeID, size);

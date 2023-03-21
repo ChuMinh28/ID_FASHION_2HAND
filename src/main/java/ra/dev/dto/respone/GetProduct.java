@@ -13,4 +13,5 @@ public class GetProduct {
     private String image;
     private String title;
     private int price;
+    private int discount;
 }

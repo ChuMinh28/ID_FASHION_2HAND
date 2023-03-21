@@ -17,8 +17,7 @@ public class ProductDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ProductDetailID")
     private int productDetailID;
-    @Column(name = "Discount")
-    private int discount;
+
     @Column(name = "Quantity")
     private int quantity;
     @ManyToOne

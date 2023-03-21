@@ -43,7 +43,7 @@ public class ProductServiceImp implements ProductService {
                     product.getProductName(),
                     product.getImage(),
                     product.getTitle(),
-                    product.getPrice());
+                    product.getPrice(),product.getDiscount());
             getProductsList.add(getProduct);
         }
         return getProductsList;
@@ -67,7 +67,7 @@ public class ProductServiceImp implements ProductService {
                         product.getProductName(),
                         product.getImage(),
                         product.getTitle(),
-                        product.getPrice());
+                        product.getPrice(),product.getDiscount());
                 if(productList.contains(getProduct)){
                     continue;
                 }else {
@@ -98,7 +98,7 @@ public class ProductServiceImp implements ProductService {
         Collections.sort(productDetailList, new Comparator<ProductDetail>() {
             @Override
             public int compare(ProductDetail u1, ProductDetail u2) {
-                    return u2.getDiscount() - u1.getDiscount();
+                    return u2.getProduct().getDiscount() - u1.getProduct().getDiscount();
             }
         });
         List<ProductSale> productSales = new ArrayList<>();
@@ -112,7 +112,7 @@ public class ProductServiceImp implements ProductService {
                     product.getPrice(),
                     productDetail.getColor().getColorName(),
                     productDetail.getSize().getSizeName(),
-                    productDetail.getDiscount());
+                    productDetail.getProduct().getDiscount());
             if(productSales.contains(productSale)){
                 continue;
             }else {
@@ -148,7 +148,7 @@ public class ProductServiceImp implements ProductService {
                         product.getProductName(),
                         product.getImage(),
                         product.getTitle(),
-                        product.getPrice());
+                        product.getPrice(),product.getDiscount());
                 if(productList.contains(getProduct)){
                     continue;
                 }else {
@@ -192,7 +192,7 @@ public class ProductServiceImp implements ProductService {
                         product.getProductName(),
                         product.getImage(),
                         product.getTitle(),
-                        product.getPrice());
+                        product.getPrice(),product.getDiscount());
                 if(productList.contains(getProduct)){
                     continue;
                 }else {
@@ -219,7 +219,8 @@ public class ProductServiceImp implements ProductService {
                     product.getProductName(),
                     product.getImage(),
                     product.getTitle(),
-                    product.getPrice());
+                    product.getPrice(),
+                    product.getDiscount());
             if(productList.contains(getProduct)){
                 continue;
             }else {
@@ -259,7 +260,7 @@ public class ProductServiceImp implements ProductService {
                 catalogList.add(catalgoFind);
             }else {
                 Catalog catalog = new Catalog();
-                catalog.setCatalogName(String.valueOf(createProduct.getListCatalog().get(i)));
+                catalog.setCatalogName(String.valueOf(createProduct.getListCatalog().get(i).getCatalogName()));
                 catalog.setCatalogStatus(true);
                 catalogList.add(catalogRepository.save(catalog));
             }
@@ -275,6 +276,7 @@ public class ProductServiceImp implements ProductService {
         product.setLimited(createProduct.isLimited());
         product.setImage(createProduct.getImage());
         product.setShipping(createProduct.isShipping());
+        product.setDiscount(createProduct.getDiscount());
         product.setListCatalog(catalogList);
         productRepository.save(product);
         for (int i = 0; i < createProduct.getListImage().size(); i++) {
@@ -314,6 +316,7 @@ public class ProductServiceImp implements ProductService {
         productUpdate.setLimited(updateProduct.isLimited());
         productUpdate.setImage(updateProduct.getImage());
         productUpdate.setShipping(updateProduct.isShipping());
+        productUpdate.setDiscount(updateProduct.getDiscount());
         productUpdate.setListCatalog(catalogListUpdate);
         productRepository.save(productUpdate);
         for (int i = 0; i < updateProduct.getListImage().size(); i++) {
