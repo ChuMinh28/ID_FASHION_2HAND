@@ -33,8 +33,9 @@ public class ProductController {
                                           @RequestParam String sizeName) {
         return productService.sortAndFilter(direcion, colorName, sizeName);
     }
+
     @GetMapping("getBestSale")
-    public List<ProductSale> getProductBestSale(){
+    public List<ProductSale> getProductBestSale() {
         return productService.getBestSale();
     }
 
@@ -44,48 +45,53 @@ public class ProductController {
             @RequestParam String colorName,
             @RequestParam String sizeName,
             @RequestParam String sex
-    ){
-        return productService.getByGender(direction,colorName,sizeName,sex);
+    ) {
+        return productService.getByGender(direction, colorName, sizeName, sex);
     }
 
     @GetMapping("getByFilter")
     public List<GetProduct> getByFilter(
             @RequestParam String colorName,
             @RequestParam String sizeName
-    ){
-        return productService.getByFilter(colorName,sizeName);
+    ) {
+        return productService.getByFilter(colorName, sizeName);
     }
+
     @GetMapping("getListLimited")
-    public List<GetProduct> getProductLimited(){
+    public List<GetProduct> getProductLimited() {
         return productService.getProductLimited();
     }
 
     @GetMapping("getProductDetail/{productID}")
-    public ProductDetailGet getProduct(@PathVariable("productID")int productID){
+    public ProductDetailGet getProduct(@PathVariable("productID") int productID) {
         return productService.getDetail(productID);
     }
+
     @PostMapping("create")
-    public Product createProduct(@RequestBody Product createProduct){
+    public Product createProduct(@RequestBody Product createProduct) {
         return productService.createProduct(createProduct);
     }
 
     @PutMapping("updateProduct/{productID}")
-    public Product updateProduct(@PathVariable("productID") int productID, @RequestBody Product productUpdate){
-        return productService.updateProduct(productID,productUpdate);
+    public Product updateProduct(@PathVariable("productID") int productID, @RequestBody Product productUpdate) {
+        return productService.updateProduct(productID, productUpdate);
     }
 
 
-    @GetMapping("/getProductByCatalog/{catalogID}")
-    public Map<String,Object> getProductByCatalog(@PathVariable("catalogID") int catalogID,
-                                                   @RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "3") int size,
-                                                   @RequestParam("direction") String direction,
-                                                   @RequestParam("sortBy") String sortBy){
-        return productService.findProductByListCatalogContaining(catalogID,page,size,direction,sortBy);
+    @GetMapping("/action")
+    public Map<String, Object> paginationCatalog(@RequestParam("catalogID") int catalogID,
+                                                 @RequestParam(defaultValue = "10") int number,
+                                                 @RequestParam(defaultValue = "0") String searchBy,
+                                                 @RequestParam(defaultValue = "0") String sortBy,
+                                                 @RequestParam(defaultValue = "0") String pagination,
+                                                 @RequestParam(defaultValue = "c") String name,
+                                                 @RequestParam(defaultValue = "desc") String direction,
+                                                 @RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "3") int size
+    ) {
+        return productService.getPagging(catalogID, number, searchBy, sortBy, pagination
+                , name, direction, page, size);
     }
-
-
-
 
 
 }

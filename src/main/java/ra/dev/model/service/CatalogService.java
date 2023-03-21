@@ -18,7 +18,7 @@ public interface CatalogService {
 
     void delete(int id);
     Catalog getById(int id);
-    List<Catalog> searchCatalogByCatalogName(String name);
-    List<Catalog> sortCatalogByCatalogName(String direction);
-    Map<String,Object> getPagging(int page, int size);
+
+    Map<String,Object> getPagging(String search,String sort,String pagination,String name,String direction,int page, int size);
+
 }

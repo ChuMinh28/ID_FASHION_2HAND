@@ -8,7 +8,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ra.dev.dto.respone.CollectionGet;
 import ra.dev.dto.respone.GetCollection;
-import ra.dev.model.entity.Catalog;
 import ra.dev.model.entity.Collections;
 import ra.dev.model.entity.Product;
 import ra.dev.model.repository.CollectionRepository;
@@ -56,42 +55,46 @@ public class CollectionServiceImp implements CollectionService {
         collectionOld.setCollectionStatus(false);
          collectionRepository.save(collectionOld);
     }
-
-    @Override
-    public List<Collections> searchCollectionsBy(String searchBy, String name) {
-        if (searchBy.equalsIgnoreCase("name")) {
-            return collectionRepository.findByCollectionNameContaining(name);
-        } else {
-            return collectionRepository.findByCollectionDescriptionContaining(name);
-        }
-    }
-
-    @Override
-    public List<Collections> sortCollectionsByCollectionsName(String direction) {
-        if (direction.equalsIgnoreCase("asc")) {
-            return collectionRepository.findAll(Sort.by("collectionName").ascending());
-        } else {
-            return collectionRepository.findAll(Sort.by("collectionName").descending());
-        }
-    }
-
-    @Override
-    public Map<String, Object> getPagging(int page, int size,String direction) {
-        Pageable  pageable;
-        if (direction.equalsIgnoreCase("asc")){
-            pageable = PageRequest.of(page, size, Sort.by("CollectionName").ascending());
-        } else {
-            pageable = PageRequest.of(page, size, Sort.by("CollectionName").descending());
-        }
-
-        Page<Collections> catalogPage=collectionRepository.findAll(pageable);
+    public Map<String,Object> pagination(Page<Collections> collectionsPage){
         Map<String,Object> data=new HashMap<>();
-        data.put("Collection in page",catalogPage.getContent());
-        data.put("Total elements in Catalog",catalogPage.getTotalElements());
-        data.put("Total page in Catalog",catalogPage.getTotalPages());
-        data.put("Size",catalogPage.getSize());
+        data.put("Collection in page",collectionsPage.getContent());
+        data.put("Total elements in Collection", collectionsPage.getTotalElements());
+        data.put("Total page in Collection", collectionsPage.getTotalPages());
+        data.put("Size", collectionsPage.getSize());
         return data;
     }
+
+    @Override
+    public Map<String, Object> getPagging(String search, String sort, String pagination, String name, String direction, int page, int size) {
+        if (search.equals("0")&&sort.equals("0")){
+            Pageable pageable=PageRequest.of(page,size);
+            Page<Collections> collectionsPage=collectionRepository.findAll(pageable);
+            return pagination(collectionsPage);
+        } else if (search.equals("0")) {
+            Pageable pageable;
+            if (direction.equalsIgnoreCase("asc")){
+                pageable=PageRequest.of(page,size,Sort.by("CollectionName").ascending());
+            }else {
+                pageable=PageRequest.of(page,size,Sort.by("CollectionName").ascending());
+            }
+            Page<Collections> collectionsPage=collectionRepository.findAll(pageable);
+            return pagination(collectionsPage);
+        } else if (sort.equals("0")) {
+            Pageable pageable=PageRequest.of(page,size);
+            Page<Collections> collectionsPage=collectionRepository.findByCollectionNameContaining(name,pageable);
+            return pagination(collectionsPage);
+        }else {
+            Pageable pageable;
+            if (direction.equalsIgnoreCase("asc")){
+                pageable=PageRequest.of(page,size,Sort.by("CollectionName").ascending());
+            }else {
+                pageable=PageRequest.of(page,size,Sort.by("CollectionName").ascending());
+            }
+            Page<Collections> collectionsPage=collectionRepository.findByCollectionNameContaining(name,pageable);
+            return pagination(collectionsPage);
+        }
+    }
+
 
 
 

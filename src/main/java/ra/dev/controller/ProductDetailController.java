@@ -42,7 +42,7 @@ public class ProductDetailController {
         return productDetailService.createProductDetail(createProductDetail);
     }
 
-    @PostMapping("update/{productDetailID}")
+    @PutMapping("update/{productDetailID}")
     public ProductDetail updateProductDetail(@PathVariable("productDetailID") int productDetailID, @RequestBody CreateProductDetail createProductDetail) {
         return productDetailService.updateProductDetail(productDetailID, createProductDetail);
     }

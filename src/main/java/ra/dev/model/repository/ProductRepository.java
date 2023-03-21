@@ -19,4 +19,10 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     List<Product> findProductByListCollectionContaining(Collections collections);
 
     Page<Product> findProductByListCatalogContaining(Catalog catalog, Pageable pageable);
+
+    Page<Product> findByProductNameContaining(String name,Pageable pageable);
+
+    Page<Product> findByDiscount(int number,Pageable pageable);
+
+    Page<Product> findByPrice(int number,Pageable pageable);
 }
