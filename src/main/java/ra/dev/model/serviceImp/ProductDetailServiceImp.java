@@ -67,7 +67,6 @@ public class ProductDetailServiceImp implements ProductDetailService {
         productDetail.setSize(size);
         productDetail.setColor(color);
         productDetail.setQuantity(createProductDetail.getQuantity());
-
         return productDetailRepository.save(productDetail);
     }
 
@@ -81,7 +80,6 @@ public class ProductDetailServiceImp implements ProductDetailService {
         productDetail.setSize(size);
         productDetail.setColor(color);
         productDetail.setQuantity(createProductDetail.getQuantity());
-
         return productDetailRepository.save(productDetail);
     }
 

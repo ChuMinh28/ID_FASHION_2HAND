@@ -44,9 +44,8 @@ public class ProductServiceImp implements ProductService {
                     product.getImage(),
                     product.getTitle(),
 
+
                     product.getPrice(),product.getDiscount());
-
-
 
             getProductsList.add(getProduct);
         }
@@ -155,7 +154,9 @@ public class ProductServiceImp implements ProductService {
                         product.getImage(),
                         product.getTitle(),
 
+
                         product.getPrice(),product.getDiscount());
+
 
                 if(productList.contains(getProduct)){
                     continue;
