@@ -99,6 +99,4 @@ public class ProductController {
     public List<Product> listBestSale(){
        return productService.listSale();
     }
-
-
 }

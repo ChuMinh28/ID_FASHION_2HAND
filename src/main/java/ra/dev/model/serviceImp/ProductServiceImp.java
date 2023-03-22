@@ -449,11 +449,4 @@ public class ProductServiceImp implements ProductService {
     public List<Product> listSale() {
         return employeeDAO.findAllEmployees();
     }
-
-//    @Override
-//    public List<Integer> listSale() {
-//        return null;
-//    }
-
-
 }
