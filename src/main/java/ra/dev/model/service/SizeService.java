@@ -10,6 +10,6 @@ public interface SizeService {
     List<Size> getAllSize();
     boolean changeSizeStatus(int sizeID, String action);
     boolean updateSize(int sizeID, Size size);
-    Map<String,Object> getPagging(String search, String sort, String pagination, String name, String direction, int page, int size);
+    Map<String,Object> getPagging(String search, String sort,  String name, String direction, int page, int size);
 
 }

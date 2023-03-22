@@ -62,7 +62,7 @@ public class SizeServiceImp implements SizeService {
        return data;
    }
     @Override
-    public Map<String, Object> getPagging(String search, String sort, String pagination, String name, String direction, int page, int size) {
+    public Map<String, Object> getPagging(String search, String sort,  String name, String direction, int page, int size) {
         if (search.equals("0")&&sort.equals("0")){
             Pageable pageable= PageRequest.of(page,size);
             Page<Size> sizePage=sizeRepository.findAll(pageable);

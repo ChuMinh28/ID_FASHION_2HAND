@@ -2,10 +2,11 @@ package ra.dev.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ra.dev.dto.request.CreateProduct;
-import ra.dev.dto.request.CreateProductDetail;
+
+import ra.dev.dto.request.ProductByCat;
 import ra.dev.dto.respone.GetProduct;
-import ra.dev.dto.respone.Inter;
+
+import ra.dev.dto.respone.GetProductByCat;
 import ra.dev.dto.respone.ProductDetailGet;
 import ra.dev.dto.respone.ProductSale;
 import ra.dev.model.entity.Product;
@@ -81,24 +82,24 @@ public class ProductController {
 
 
     @GetMapping("/action")
-    public Map<String, Object> paginationCatalog(@RequestParam("catalogID") int catalogID,
+    public Map<String, Object> paginationProduct(@RequestParam("catalogID") int catalogID,
                                                  @RequestParam(defaultValue = "10") int number,
                                                  @RequestParam(defaultValue = "0") String searchBy,
                                                  @RequestParam(defaultValue = "0") String sortBy,
-                                                 @RequestParam(defaultValue = "0") String pagination,
                                                  @RequestParam(defaultValue = "c") String name,
                                                  @RequestParam(defaultValue = "desc") String direction,
                                                  @RequestParam(defaultValue = "0") int page,
-                                                 @RequestParam(defaultValue = "3") int size
-    ) {
-        return productService.getPagging(catalogID, number, searchBy, sortBy, pagination
-                , name, direction, page, size);
+                                                 @RequestParam(defaultValue = "3") int size) {
+        return productService.getPagging(catalogID, number, searchBy, sortBy, name, direction, page, size);
     }
 
     @GetMapping("getBestSale2")
-    public List<Product> listBestSale(){
-       return productService.listSale();
+    public List<Product> listBestSale() {
+        return productService.listSale();
     }
 
-
+    @GetMapping("/findProductByCatalog")
+    public List<GetProductByCat> findProductByCatalog(@RequestBody ProductByCat listCat) {
+        return productService.findProductByCatalog(listCat);
+    }
 }
