@@ -3,44 +3,44 @@ package ra.dev.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ra.dev.model.entity.Color;
-import ra.dev.model.service.ColorService;
+import ra.dev.model.entity.Size;
+import ra.dev.model.service.SizeService;
 
 import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
-@RequestMapping("/api/v1/color")
-public class ColorController {
+@RequestMapping("/api/v1/size")
+public class SizeController {
     @Autowired
-    private ColorService colorService;
+    private SizeService sizeService;
 
-    @PostMapping("createColor")
-    public ResponseEntity<?> createColor(@RequestBody Color color) {
+    @PostMapping("createSize")
+    public ResponseEntity<?> createSize(@RequestBody Size size) {
         try {
-            return ResponseEntity.ok(colorService.saveOrUpdate(color));
+            return ResponseEntity.ok(sizeService.saveOrUpdate(size));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Create failed!");
         }
     }
 
-    @GetMapping("getAllColor")
-    public ResponseEntity<?> getALlColor() {
+    @GetMapping("getAllSize")
+    public ResponseEntity<?> getALlSize() {
         try {
-            return ResponseEntity.ok(colorService.getAllColor());
+            return ResponseEntity.ok(sizeService.getAllSize());
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Error!!!");
         }
     }
 
-    @PatchMapping("updateColor/{colorID}")
-    public ResponseEntity<?> updateColor(@PathVariable("colorID") int colorID, @RequestBody Color color) {
+    @PatchMapping("updateSize/{sizeID}")
+    public ResponseEntity<?> updateColor(@PathVariable("sizeID") int sizeID, @RequestBody Size size) {
         try {
-            boolean check = colorService.updateColor(colorID, color);
+            boolean check = sizeService.updateSize(sizeID, size);
             if (check) {
-                return ResponseEntity.ok("Update color successfully!");
+                return ResponseEntity.ok("Update size successfully!");
             } else {
                 return ResponseEntity.badRequest().body("Error!!!");
             }
@@ -50,14 +50,14 @@ public class ColorController {
         }
     }
 
-    @PatchMapping("changeColorStatus/{colorID}")
-    public ResponseEntity<?> changeColorStatus(@PathVariable("colorID") int colorID, @RequestParam("action") String action) {
+    @PatchMapping("changeSizeStatus/{sizeID}")
+    public ResponseEntity<?> changeColorStatus(@PathVariable("sizeID") int sizeID, @RequestParam("action") String action) {
         try {
-            boolean check = colorService.changeColorStatus(colorID, action);
+            boolean check = sizeService.changeSizeStatus(sizeID, action);
             if (check) {
-                return ResponseEntity.ok("Unlock color successfully!");
+                return ResponseEntity.ok("Unlock size successfully!");
             } else {
-                return ResponseEntity.ok("Lock color successfully!");
+                return ResponseEntity.ok("Lock size successfully!");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,6 +73,6 @@ public class ColorController {
                                                  @RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "3") int size
     ) {
-        return colorService.getPagging(search,sort,pagination,name,direction,page, size);
+        return sizeService.getPagging(search,sort,pagination,name,direction,page, size);
     }
 }

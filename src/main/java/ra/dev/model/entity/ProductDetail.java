@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
+
 
 @Entity
 @Table(name = "ProductDetail")
@@ -17,8 +17,6 @@ public class ProductDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ProductDetailID")
     private int productDetailID;
-    @Column(name = "Discount")
-    private int discount;
     @Column(name = "Quantity")
     private int quantity;
     @ManyToOne
@@ -31,16 +29,6 @@ public class ProductDetail {
     @ManyToOne
     @JoinColumn(name = "ColorID")
     private Color color;
-
-
-
-
-//    @ManyToMany
-//    @JoinTable(name = "Product_Sizes", joinColumns = @JoinColumn(name = "productDetailID"), inverseJoinColumns = @JoinColumn(name = "sizesID"))
-//    private List<Size> listSizes;
-//    @ManyToMany
-//    @JoinTable(name = "Product_Color", joinColumns = @JoinColumn(name = "productDetailID"), inverseJoinColumns = @JoinColumn(name = "colorID"))
-//    private List<Color> listColor;
 
 
 }

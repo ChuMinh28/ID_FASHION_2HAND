@@ -22,6 +22,8 @@ public class Collections {
     private String collectionName;
     @Column(name = "CollectionStatus")
     private boolean collectionStatus;
+    @Column(name = "collectionDescription")
+    private String collectionDescription;
     @Override
     public String toString(){
         return this.getCollectionName();
