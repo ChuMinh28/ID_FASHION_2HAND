@@ -7,9 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ra.dev.dto.request.CreateProduct;
-import ra.dev.dto.respone.GetProduct;
-import ra.dev.dto.respone.ProductDetailGet;
-import ra.dev.dto.respone.ProductSale;
+import ra.dev.dto.respone.*;
 import ra.dev.model.entity.*;
 import ra.dev.model.repository.*;
 import ra.dev.model.service.ProductService;
@@ -33,6 +31,10 @@ public class ProductServiceImp implements ProductService {
 
     @Autowired
     ImageRepository imageRepository;
+    @Autowired
+    OrderDetailRepository orderDetailRepository;
+    @Autowired
+    EmployeeDAO employeeDAO;
     @Override
     public List<GetProduct> getAll() {
         List<Product> productList = productRepository.findAll();
@@ -341,6 +343,10 @@ public class ProductServiceImp implements ProductService {
         return productUpdate;
 
     }
+
+
+
+
     public Map<String,Object> getPagination(Page<Product> productPage){
         Map<String,Object> data=new HashMap<>();
         data.put("Product in page",productPage.getContent());
@@ -352,6 +358,7 @@ public class ProductServiceImp implements ProductService {
 
     @Override
     public Map<String, Object> getPagging(int id, int number,String searchBy, String sortBy, String pagination, String name, String direction, int page, int size) {
+
         Catalog catalog=catalogRepository.findById(id).get();
         if (searchBy.equals("0")&&sortBy.equals("0")){
             Pageable pageable=PageRequest.of(page,size);
@@ -437,6 +444,16 @@ public class ProductServiceImp implements ProductService {
             return getPagination(productPage);
         }
     }
+
+    @Override
+    public List<Product> listSale() {
+        return employeeDAO.findAllEmployees();
+    }
+
+//    @Override
+//    public List<Integer> listSale() {
+//        return null;
+//    }
 
 
 }
