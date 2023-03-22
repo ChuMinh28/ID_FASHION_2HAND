@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ra.dev.dto.request.CreateProduct;
 import ra.dev.dto.request.CreateProductDetail;
 import ra.dev.dto.respone.GetProduct;
+import ra.dev.dto.respone.Inter;
 import ra.dev.dto.respone.ProductDetailGet;
 import ra.dev.dto.respone.ProductSale;
 import ra.dev.model.entity.Product;
@@ -12,6 +13,7 @@ import ra.dev.model.entity.ProductDetail;
 
 import ra.dev.model.service.ProductService;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 import java.util.Map;
 
@@ -90,6 +92,11 @@ public class ProductController {
                                                  @RequestParam(defaultValue = "3") int size
     ) {
         return productService.getPagging(catalogID, number, searchBy, sortBy, pagination, name, direction, page, size);
+    }
+
+    @GetMapping("getBestSale2")
+    public List<Product> listBestSale(){
+       return productService.listSale();
     }
 
 
