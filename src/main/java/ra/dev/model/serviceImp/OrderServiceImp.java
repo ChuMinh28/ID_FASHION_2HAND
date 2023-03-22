@@ -1,15 +1,26 @@
 package ra.dev.model.serviceImp;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ra.dev.dto.request.OrderCreate;
 import ra.dev.dto.respone.OrderDetailResponse;
 import ra.dev.dto.respone.OrderRecentResponse;
 import ra.dev.dto.respone.OrderResponse;
+
+import ra.dev.dto.respone.UserResponse;
+import ra.dev.model.entity.*;
+
 import ra.dev.model.entity.Order;
 import ra.dev.model.entity.OrderDetail;
 import ra.dev.model.entity.User;
+
 import ra.dev.model.repository.OrderDetailRepository;
 import ra.dev.model.repository.OrderRepository;
 import ra.dev.model.repository.UserRepository;
@@ -17,10 +28,8 @@ import ra.dev.model.service.OrderService;
 import ra.dev.security.CustomUserDetails;
 
 
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,6 +63,7 @@ public class OrderServiceImp implements OrderService {
     @Override
     public OrderResponse getUserOrder() {
         CustomUserDetails customUserDetail = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         try {
             Order order = orderRepository.findByOrderStatusAndUser_UserID(1, customUserDetail.getUserId());
             OrderResponse orderResponse = new OrderResponse();
@@ -78,6 +88,7 @@ public class OrderServiceImp implements OrderService {
         } catch (Exception e) {
             return null;
         }
+
     }
 
     @Override
@@ -137,4 +148,97 @@ public class OrderServiceImp implements OrderService {
         }
         return newOrder;
     }
+
+    public Map<String, Object> getPaggination(Page<Order> orderPage) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("Order in page", orderPage.getContent());
+        data.put("Total elements in Catalog", orderPage.getTotalElements());
+        data.put("Total page in Catalog", orderPage.getTotalPages());
+        data.put("Size", orderPage.getSize());
+        return data;
+    }
+
+    @Override
+    public Map<String, Object> getPagging( int number, String searchBy, String name, String sortBy, String direction, int page, int size) {
+        if (searchBy.equals("0") && sortBy.equals("0")) {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Order> orderPage = orderRepository.findAll(pageable);
+            return getPaggination(orderPage);
+        } else if (searchBy != "0") {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Order> orderPage;
+            if (searchBy.equals("status")) {
+                orderPage = orderRepository.findByOrOrderStatus(number, pageable);
+            } else {
+                orderPage = orderRepository.findByAddressContaining(pageable, name);
+            }
+            return getPaggination(orderPage);
+        } else if (sortBy != "0") {
+            Pageable pageable;
+            if (sortBy.equals("date")) {
+                if (direction.equalsIgnoreCase("asc")) {
+                    pageable = PageRequest.of(page, size, Sort.by("OrderDate").ascending());
+                } else {
+                    pageable = PageRequest.of(page, size, Sort.by("OrderDate").descending());
+                }
+            } else if (sortBy.equalsIgnoreCase("totalamount")) {
+                if (direction.equalsIgnoreCase("asc")) {
+                    pageable = PageRequest.of(page, size, Sort.by("TotalAmount").ascending());
+                } else {
+                    pageable = PageRequest.of(page, size, Sort.by("TotalAmount").descending());
+                }
+            } else {
+                if (direction.equalsIgnoreCase("asc")) {
+                    pageable = PageRequest.of(page, size, Sort.by("OrderStatus").ascending());
+                } else {
+                    pageable = PageRequest.of(page, size, Sort.by("OrderStatus").descending());
+                }
+            }
+            Page<Order> orderPage = orderRepository.findAll(pageable);
+            return getPaggination(orderPage);
+        } else {
+            Pageable pageable;
+            if (sortBy.equals("date")) {
+                if (direction.equalsIgnoreCase("asc")) {
+                    pageable = PageRequest.of(page, size, Sort.by("OrderDate").ascending());
+                } else {
+                    pageable = PageRequest.of(page, size, Sort.by("OrderDate").descending());
+                }
+            } else if (sortBy.equalsIgnoreCase("totalamount")) {
+                if (direction.equalsIgnoreCase("asc")) {
+                    pageable = PageRequest.of(page, size, Sort.by("TotalAmount").ascending());
+                } else {
+                    pageable = PageRequest.of(page, size, Sort.by("TotalAmount").descending());
+                }
+            } else {
+                if (direction.equalsIgnoreCase("asc")) {
+                    pageable = PageRequest.of(page, size, Sort.by("OrderStatus").ascending());
+                } else {
+                    pageable = PageRequest.of(page, size, Sort.by("OrderStatus").descending());
+                }
+            }
+            Page<Order> orderPage;
+            if (searchBy.equals("status")) {
+                orderPage = orderRepository.findByOrOrderStatus(number, pageable);
+            } else {
+                orderPage = orderRepository.findByAddressContaining(pageable, name);
+            }
+            return getPaggination(orderPage);
+        }
+
+    }
+
+
+    @Override
+    public Map<String, Object> findByDate(LocalDate start, LocalDate end, Pageable pageable) {
+        Page<Order> orders = orderRepository.findOrderByOrderDateBetween(start, end, pageable);
+        Map<String, Object> data = new HashMap<>();
+        data.put("Order", orders.getContent());
+        data.put("TotalElement", orders.getTotalElements());
+        data.put("Size", orders.getSize());
+        data.put("TotalPage", orders.getTotalPages());
+        return data;
+    }
+
+
 }

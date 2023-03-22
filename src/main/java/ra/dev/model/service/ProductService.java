@@ -1,10 +1,8 @@
 package ra.dev.model.service;
 
 import ra.dev.dto.request.CreateProduct;
-import ra.dev.dto.respone.GetProduct;
-import ra.dev.dto.respone.Inter;
-import ra.dev.dto.respone.ProductDetailGet;
-import ra.dev.dto.respone.ProductSale;
+import ra.dev.dto.request.ProductByCat;
+import ra.dev.dto.respone.*;
 import ra.dev.model.entity.Product;
 import ra.dev.model.entity.ProductDetail;
 
@@ -25,8 +23,11 @@ public interface ProductService {
     Product createProduct(Product createProduct);
     Product updateProduct(int productID, Product updateProduct);
     List<Product> listSale();
-    Map<String,Object> getPagging(int id, int number,String searchBy,String sortBy,String pagination,String name,String direction,int page, int size);
+
+    Map<String,Object> getPagging(int id, int number,String searchBy,String sortBy,String name,String direction,int page, int size);
 
 
+
+   List<GetProductByCat> findProductByCatalog(ProductByCat productByCat);
 
 }

@@ -11,5 +11,5 @@ public interface ColorService {
     boolean changeColorStatus(int colorID, String action);
     boolean updateColor(int colorID, Color color);
 
-    Map<String,Object> getPagging(String search,String sort,String pagination,String name,String direction,int page, int size);
+    Map<String,Object> getPagging(String search,String sort,String name,String direction,int page, int size);
 }

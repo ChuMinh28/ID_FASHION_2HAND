@@ -46,13 +46,12 @@ public class CatalogController {
     @GetMapping("/action")
     public Map<String, Object> paginationCatalog(@RequestParam(defaultValue = "0") String search,
                                                  @RequestParam(defaultValue = "0") String sort,
-                                                 @RequestParam(defaultValue = "0") String pagination,
                                                  @RequestParam(defaultValue = "c") String name,
                                                  @RequestParam(defaultValue = "desc") String direction,
                                                  @RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "3") int size
     ) {
-        return catalogService.getPagging(search,sort,pagination,name,direction,page, size);
+        return catalogService.getPagging(search,sort,name,direction,page, size);
     }
 
 
