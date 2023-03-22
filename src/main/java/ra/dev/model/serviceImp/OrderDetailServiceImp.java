@@ -7,7 +7,6 @@ import ra.dev.dto.request.OrderRequest;
 import ra.dev.model.entity.*;
 import ra.dev.model.repository.*;
 import ra.dev.model.service.OrderDetailService;
-import ra.dev.model.service.OrderService;
 
 import java.util.List;
 
@@ -53,7 +52,7 @@ public class OrderDetailServiceImp implements OrderDetailService {
                 orderDetailUpdate.setOrder(newOrder);
                 orderDetailUpdate.setProduct(product);
                 orderDetailUpdate.setQuantity(orderDetailUpdate.getQuantity()+ cartCreate.getQuantity());
-                orderDetailUpdate.setTotalAmount(orderDetailUpdate.getTotalAmount()+cartCreate.getQuantity()*(product.getPrice()*100-productDetail.getDiscount())/100);
+                orderDetailUpdate.setTotalAmount(orderDetailUpdate.getTotalAmount()+cartCreate.getQuantity()*(product.getPrice()*100-productDetail.getProduct().getDiscount())/100);
                 orderDetailUpdate.setColor(productDetail.getColor().getColorName());
                 orderDetailUpdate.setSize(productDetail.getSize().getSizeName());
                 orderDetailUpdate.setPrice(product.getPrice());
@@ -62,7 +61,7 @@ public class OrderDetailServiceImp implements OrderDetailService {
                 orderDetail.setOrder(newOrder);
                 orderDetail.setProduct(product);
                 orderDetail.setQuantity(cartCreate.getQuantity());
-                orderDetail.setTotalAmount(cartCreate.getQuantity()*(product.getPrice()*100-productDetail.getDiscount())/100);
+                orderDetail.setTotalAmount(cartCreate.getQuantity()*(product.getPrice()*100-productDetail.getProduct().getDiscount())/100);
                 orderDetail.setColor(productDetail.getColor().getColorName());
                 orderDetail.setSize(productDetail.getSize().getSizeName());
                 orderDetail.setPrice(product.getPrice());
@@ -78,7 +77,7 @@ public class OrderDetailServiceImp implements OrderDetailService {
             orderDetail.setOrder(orderCreate);
             orderDetail.setProduct(product);
             orderDetail.setQuantity(cartCreate.getQuantity());
-            orderDetail.setTotalAmount(cartCreate.getQuantity()*(product.getPrice()*100-productDetail.getDiscount())/100);
+            orderDetail.setTotalAmount(cartCreate.getQuantity()*(product.getPrice()*100-productDetail.getProduct().getDiscount())/100);
             orderDetail.setColor(productDetail.getColor().getColorName());
             orderDetail.setSize(productDetail.getSize().getSizeName());
             orderDetail.setPrice(product.getPrice());
