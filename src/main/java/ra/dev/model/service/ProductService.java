@@ -2,6 +2,7 @@ package ra.dev.model.service;
 
 import ra.dev.dto.request.CreateProduct;
 import ra.dev.dto.respone.GetProduct;
+import ra.dev.dto.respone.Inter;
 import ra.dev.dto.respone.ProductDetailGet;
 import ra.dev.dto.respone.ProductSale;
 import ra.dev.model.entity.Product;
@@ -25,5 +26,7 @@ public interface ProductService {
     Product updateProduct(int productID, Product updateProduct);
 
     Map<String, Object> findProductByListCatalogContaining(int id , int page, int size, String direction,String sortBy);
- 
+    List<Product> listSale();
+
+
 }
