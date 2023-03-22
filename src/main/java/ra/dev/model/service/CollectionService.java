@@ -18,7 +18,7 @@ public interface CollectionService {
 
     void delete(int id);
 
-    Map<String,Object> getPagging(String search,String sort,String pagination,String name,String direction,int page, int size);
+    Map<String,Object> getPagging(String search,String sort,String name,String direction,int page, int size);
     CollectionGet getByID(int collectionID);
 
 }

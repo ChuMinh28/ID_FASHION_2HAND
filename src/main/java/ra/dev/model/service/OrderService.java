@@ -7,6 +7,7 @@ import ra.dev.dto.request.OrderCreate;
 import ra.dev.dto.respone.OrderResponse;
 import ra.dev.model.entity.Order;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import java.util.List;
@@ -17,6 +18,6 @@ public interface OrderService {
     OrderResponse getUserOrder();
     List<OrderRecentResponse> orderRecent(int size);
     Order checkout(OrderCreate orderCreate);
-    Map<String,Object> getPagging(int number, String searchBy,String name, String sortBy, String pagination, String direction, int page, int size);
-
+    Map<String,Object> getPagging(int number, String searchBy,String name, String sortBy, String direction, int page, int size);
+   Map<String,Object> findByDate(LocalDate start,LocalDate end,Pageable pageable);
 }

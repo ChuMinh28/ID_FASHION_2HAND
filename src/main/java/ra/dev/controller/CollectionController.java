@@ -48,12 +48,12 @@ public class CollectionController {
     @GetMapping("/action")
     public Map<String, Object> paginationCollection(@RequestParam(defaultValue = "0") String search,
                                                  @RequestParam(defaultValue = "0") String sort,
-                                                 @RequestParam(defaultValue = "0") String pagination,
+
                                                  @RequestParam("name") String name,
                                                  @RequestParam("direction") String direction,
                                                  @RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "3") int size
     ) {
-        return collectionService.getPagging(search,sort,pagination,name,direction,page, size);
+        return collectionService.getPagging(search,sort,name,direction,page, size);
     }
 }

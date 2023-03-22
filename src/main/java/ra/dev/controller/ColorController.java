@@ -67,12 +67,12 @@ public class ColorController {
     @GetMapping("/action")
     public Map<String, Object> paginationColor(@RequestParam(defaultValue = "0") String search,
                                                  @RequestParam(defaultValue = "0") String sort,
-                                                 @RequestParam(defaultValue = "0") String pagination,
+
                                                  @RequestParam(defaultValue = "c") String name,
                                                  @RequestParam(defaultValue = "desc") String direction,
                                                  @RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "3") int size
     ) {
-        return colorService.getPagging(search,sort,pagination,name,direction,page, size);
+        return colorService.getPagging(search,sort,name,direction,page, size);
     }
 }
