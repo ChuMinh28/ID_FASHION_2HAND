@@ -1,18 +1,26 @@
 package ra.dev.model.serviceImp;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ra.dev.dto.request.OrderCreate;
 import ra.dev.dto.respone.OrderDetailResponse;
 import ra.dev.dto.respone.OrderRecentResponse;
 import ra.dev.dto.respone.OrderResponse;
+
 import ra.dev.dto.respone.UserResponse;
 import ra.dev.model.entity.*;
+
+import ra.dev.model.entity.Order;
+import ra.dev.model.entity.OrderDetail;
+import ra.dev.model.entity.User;
+
 import ra.dev.model.repository.OrderDetailRepository;
 import ra.dev.model.repository.OrderRepository;
 import ra.dev.model.repository.UserRepository;
@@ -55,25 +63,32 @@ public class OrderServiceImp implements OrderService {
     @Override
     public OrderResponse getUserOrder() {
         CustomUserDetails customUserDetail = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Order order = orderRepository.findByOrderStatusAndUser_UserID(1, customUserDetail.getUserId());
-        OrderResponse orderResponse = new OrderResponse();
-        List<OrderDetail> list = orderDetailRepository.findAllByOrder_OrderID(order.getOrderID());
-        int totalAmount = 0;
-        for (OrderDetail orderDetail : list) {
-            OrderDetailResponse orderDetailResponse = new OrderDetailResponse();
-            orderDetailResponse.setProductName(orderDetail.getProduct().getProductName());
-            orderDetailResponse.setColor(orderDetail.getColor());
-            orderDetailResponse.setSize(orderDetail.getSize());
-            orderDetailResponse.setImage(orderDetail.getProduct().getImage());
-            orderDetailResponse.setQuantity(orderDetail.getQuantity());
-            orderDetailResponse.setPrice(orderDetail.getPrice());
-            orderDetailResponse.setTotalAmount(orderDetail.getTotalAmount());
-            orderResponse.getListOrderDetail().add(orderDetailResponse);
-            totalAmount += orderDetailResponse.getTotalAmount();
+
+        try {
+            Order order = orderRepository.findByOrderStatusAndUser_UserID(1, customUserDetail.getUserId());
+            OrderResponse orderResponse = new OrderResponse();
+            List<OrderDetail> list = orderDetailRepository.findAllByOrder_OrderID(order.getOrderID());
+            int totalAmount = 0;
+            for (OrderDetail orderDetail : list) {
+                OrderDetailResponse orderDetailResponse = new OrderDetailResponse();
+                orderDetailResponse.setOrderDetailID(orderDetail.getOrderDetailID());
+                orderDetailResponse.setProductName(orderDetail.getProduct().getProductName());
+                orderDetailResponse.setColor(orderDetail.getColor());
+                orderDetailResponse.setSize(orderDetail.getSize());
+                orderDetailResponse.setImage(orderDetail.getProduct().getImage());
+                orderDetailResponse.setQuantity(orderDetail.getQuantity());
+                orderDetailResponse.setPrice(orderDetail.getPrice());
+                orderDetailResponse.setTotalAmount(orderDetail.getTotalAmount());
+                orderResponse.getListOrderDetail().add(orderDetailResponse);
+                totalAmount += orderDetailResponse.getTotalAmount();
+            }
+            orderResponse.setTotalAmount(totalAmount);
+            orderResponse.setShipping(false);
+            return orderResponse;
+        } catch (Exception e) {
+            return null;
         }
-        orderResponse.setTotalAmount(totalAmount);
-        orderResponse.setShipping(false);
-        return orderResponse;
+
     }
 
     @Override
@@ -95,6 +110,7 @@ public class OrderServiceImp implements OrderService {
                 if (order.getOrderStatus() == 4) {
                     orderRecentResponse.setOrderStatus("Complete");
                 }
+                orderRecentResponse.setOrderID(order.getOrderID());
                 orderRecentResponse.setPaymentMethod("Cash");
                 orderRecentResponse.setTotalAmount(order.getTotalAmount());
                 list.add(orderRecentResponse);
