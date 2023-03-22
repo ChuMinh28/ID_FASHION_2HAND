@@ -61,6 +61,7 @@ public class OrderServiceImp implements OrderService {
             int totalAmount = 0;
             for (OrderDetail orderDetail : list) {
                 OrderDetailResponse orderDetailResponse = new OrderDetailResponse();
+                orderDetailResponse.setOrderDetailID(orderDetail.getOrderDetailID());
                 orderDetailResponse.setProductName(orderDetail.getProduct().getProductName());
                 orderDetailResponse.setColor(orderDetail.getColor());
                 orderDetailResponse.setSize(orderDetail.getSize());
@@ -98,6 +99,7 @@ public class OrderServiceImp implements OrderService {
                 if (order.getOrderStatus() == 4) {
                     orderRecentResponse.setOrderStatus("Complete");
                 }
+                orderRecentResponse.setOrderID(order.getOrderID());
                 orderRecentResponse.setPaymentMethod("Cash");
                 orderRecentResponse.setTotalAmount(order.getTotalAmount());
                 list.add(orderRecentResponse);
