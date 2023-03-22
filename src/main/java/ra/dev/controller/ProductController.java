@@ -79,7 +79,7 @@ public class ProductController {
 
 
     @GetMapping("/action")
-    public Map<String, Object> paginationCatalog(@RequestParam("catalogID") int catalogID,
+    public Map<String, Object> paginationProduct(@RequestParam("catalogID") int catalogID,
                                                  @RequestParam(defaultValue = "10") int number,
                                                  @RequestParam(defaultValue = "0") String searchBy,
                                                  @RequestParam(defaultValue = "0") String sortBy,
@@ -89,8 +89,7 @@ public class ProductController {
                                                  @RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "3") int size
     ) {
-        return productService.getPagging(catalogID, number, searchBy, sortBy, pagination
-                , name, direction, page, size);
+        return productService.getPagging(catalogID, number, searchBy, sortBy, pagination, name, direction, page, size);
     }
 
 

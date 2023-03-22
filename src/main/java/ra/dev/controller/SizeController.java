@@ -65,7 +65,7 @@ public class SizeController {
         }
     }
     @GetMapping("/action")
-    public Map<String, Object> paginationCatalog(@RequestParam(defaultValue = "0") String search,
+    public Map<String, Object> paginationSize(@RequestParam(defaultValue = "0") String search,
                                                  @RequestParam(defaultValue = "0") String sort,
                                                  @RequestParam(defaultValue = "0") String pagination,
                                                  @RequestParam(defaultValue = "c") String name,
