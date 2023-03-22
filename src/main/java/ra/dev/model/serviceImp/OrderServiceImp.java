@@ -54,6 +54,7 @@ public class OrderServiceImp implements OrderService {
     @Override
     public OrderResponse getUserOrder() {
         CustomUserDetails customUserDetail = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
             Order order = orderRepository.findByOrderStatusAndUser_UserID(1, customUserDetail.getUserId());
             OrderResponse orderResponse = new OrderResponse();
             List<OrderDetail> list = orderDetailRepository.findAllByOrder_OrderID(order.getOrderID());
@@ -73,6 +74,9 @@ public class OrderServiceImp implements OrderService {
             orderResponse.setTotalAmount(totalAmount);
             orderResponse.setShipping(false);
             return orderResponse;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override

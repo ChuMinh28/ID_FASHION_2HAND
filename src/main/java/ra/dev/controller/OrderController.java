@@ -56,17 +56,12 @@ public class OrderController {
 
     @GetMapping("getUserOrder")
     public ResponseEntity<?> getUserOrder() {
-       try {
            OrderResponse orderResponse = orderService.getUserOrder();
            if (orderResponse != null) {
                return ResponseEntity.ok(orderResponse);
            } else {
                return ResponseEntity.ok("Cart is empty!");
            }
-       }catch (Exception e) {
-           e.printStackTrace();
-           return ResponseEntity.badRequest().body("Error!");
-       }
     }
 
     @GetMapping("recentOrder")
