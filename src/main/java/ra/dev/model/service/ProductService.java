@@ -24,11 +24,7 @@ public interface ProductService {
     ProductDetailGet getDetail(int productID);
     Product createProduct(Product createProduct);
     Product updateProduct(int productID, Product updateProduct);
-
-
-    Map<String, Object> findProductByListCatalogContaining(int id , int page, int size, String direction,String sortBy);
     List<Product> listSale();
-
     Map<String,Object> getPagging(int id, int number,String searchBy,String sortBy,String pagination,String name,String direction,int page, int size);
 
 
