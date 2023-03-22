@@ -11,7 +11,7 @@ import ra.dev.model.entity.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateProductDetail {
-    private int discount;
+
     private int quantity;
     private int productID;
     private int sizeID;

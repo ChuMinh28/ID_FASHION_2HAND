@@ -134,24 +134,6 @@ public class UserController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("sortByFullName")
-    public ResponseEntity<?> sortByFullName(
-            @RequestParam("direction") String direction,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Map<String, Object> list = userService.softByName(direction, size, page);
-        return ResponseEntity.ok(list);
-    }
-
-    @GetMapping("searchByFullName")
-    public ResponseEntity<?> searchByFullName(
-            @RequestParam("fullName") String fullName,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Map<String, Object> list = userService.searchByName(fullName, pageable);
-        return ResponseEntity.ok(list);
-    }
 
     @GetMapping("searchAndSortAndPaging")
     public ResponseEntity<?> searchAndSortAndPaging(

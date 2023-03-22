@@ -6,9 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ra.dev.dto.respone.GetProduct;
-import ra.dev.dto.respone.ProductDetailGet;
-import ra.dev.dto.respone.ProductSale;
+import ra.dev.dto.request.CreateProduct;
+import ra.dev.dto.respone.*;
 import ra.dev.model.entity.*;
 import ra.dev.model.repository.*;
 import ra.dev.model.service.ProductService;
@@ -32,6 +31,10 @@ public class ProductServiceImp implements ProductService {
 
     @Autowired
     ImageRepository imageRepository;
+    @Autowired
+    OrderDetailRepository orderDetailRepository;
+    @Autowired
+    EmployeeDAO employeeDAO;
     @Override
     public List<GetProduct> getAll() {
         List<Product> productList = productRepository.findAll();
@@ -42,8 +45,10 @@ public class ProductServiceImp implements ProductService {
                     product.getProductName(),
                     product.getImage(),
                     product.getTitle(),
-                    product.getPrice(),
-                    product.getDiscount());
+
+
+                    product.getPrice(),product.getDiscount());
+
             getProductsList.add(getProduct);
         }
         return getProductsList;
@@ -67,8 +72,9 @@ public class ProductServiceImp implements ProductService {
                         product.getProductName(),
                         product.getImage(),
                         product.getTitle(),
-                        product.getPrice(),
-                        product.getDiscount());
+
+                        product.getPrice(),product.getDiscount());
+
                 if(productList.contains(getProduct)){
                     continue;
                 }else {
@@ -149,8 +155,11 @@ public class ProductServiceImp implements ProductService {
                         product.getProductName(),
                         product.getImage(),
                         product.getTitle(),
-                        product.getPrice(),
-                        product.getDiscount());
+
+
+                        product.getPrice(),product.getDiscount());
+
+
                 if(productList.contains(getProduct)){
                     continue;
                 }else {
@@ -194,8 +203,9 @@ public class ProductServiceImp implements ProductService {
                         product.getProductName(),
                         product.getImage(),
                         product.getTitle(),
-                        product.getPrice(),
-                        product.getDiscount());
+
+                        product.getPrice(),product.getDiscount());
+
                 if(productList.contains(getProduct)){
                     continue;
                 }else {
@@ -263,7 +273,7 @@ public class ProductServiceImp implements ProductService {
                 catalogList.add(catalgoFind);
             }else {
                 Catalog catalog = new Catalog();
-                catalog.setCatalogName(String.valueOf(createProduct.getListCatalog().get(i)));
+                catalog.setCatalogName(String.valueOf(createProduct.getListCatalog().get(i).getCatalogName()));
                 catalog.setCatalogStatus(true);
                 catalogList.add(catalogRepository.save(catalog));
             }
@@ -280,6 +290,7 @@ public class ProductServiceImp implements ProductService {
         product.setLimited(createProduct.isLimited());
         product.setImage(createProduct.getImage());
         product.setShipping(createProduct.isShipping());
+
         product.setListCatalog(catalogList);
         productRepository.save(product);
         for (int i = 0; i < createProduct.getListImage().size(); i++) {
@@ -320,6 +331,7 @@ public class ProductServiceImp implements ProductService {
         productUpdate.setLimited(updateProduct.isLimited());
         productUpdate.setImage(updateProduct.getImage());
         productUpdate.setShipping(updateProduct.isShipping());
+
         productUpdate.setListCatalog(catalogListUpdate);
         productRepository.save(productUpdate);
         for (int i = 0; i < updateProduct.getListImage().size(); i++) {
@@ -331,31 +343,117 @@ public class ProductServiceImp implements ProductService {
         return productUpdate;
 
     }
-    public Map<String, Object> findProductByListCatalogContaining(int id, int page, int size, String direction, String sortBy) {
-        Catalog catalog=catalogRepository.findById(id).get();
-        Pageable pageable;
-        if (sortBy.equalsIgnoreCase("name")){
-            if (direction.equalsIgnoreCase("asc")) {
-                pageable = PageRequest.of(page, size, Sort.by("ProductName").ascending());
-            } else {
-                pageable = PageRequest.of(page, size, Sort.by("ProductName").descending());
-            }
-        }else {
-            if (direction.equalsIgnoreCase("asc")) {
-                pageable = PageRequest.of(page, size, Sort.by("Price").ascending());
-            } else {
-                pageable = PageRequest.of(page, size, Sort.by("Price").descending());
-            }
-        }
-        Page<Product> productPage=productRepository.findProductByListCatalogContaining(catalog,pageable);
-        Map<String, Object> data = new HashMap<>();
-        data.put("Product", productPage.getContent());
-        data.put("Size", productPage.getSize());
-        data.put("TotalElement", productPage.getTotalElements());
-        data.put("TotalPage", productPage.getTotalPages());
+
+
+
+
+    public Map<String,Object> getPagination(Page<Product> productPage){
+        Map<String,Object> data=new HashMap<>();
+        data.put("Product in page",productPage.getContent());
+        data.put("TotalElement",productPage.getTotalElements());
+        data.put("Size",productPage.getSize());
+        data.put("TotalPage",productPage.getTotalPages());
         return data;
     }
 
+    @Override
+    public Map<String, Object> getPagging(int id, int number,String searchBy, String sortBy, String pagination, String name, String direction, int page, int size) {
+
+        Catalog catalog=catalogRepository.findById(id).get();
+        if (searchBy.equals("0")&&sortBy.equals("0")){
+            Pageable pageable=PageRequest.of(page,size);
+            Page<Product> productPage;
+            if (pagination.equals("catalog")){
+                productPage=productRepository.findProductByListCatalogContaining(catalog,pageable);
+            }else {
+                productPage=productRepository.findAll(pageable);
+            }
+            return getPagination(productPage);
+        } else if (searchBy!="0") {
+            Pageable pageable=PageRequest.of(page,size);
+            Page<Product> productPage;
+            if (searchBy.equals("name")){
+               productPage=productRepository.findByProductNameContaining(name,pageable);
+            } else if (searchBy.equals("discount")) {
+                productPage=productRepository.findByDiscount(number,pageable);
+            } else if (searchBy.equals("catalog")) {
+                productPage=productRepository.findProductByListCatalogContaining(catalog,pageable);
+            } else {
+                productPage=productRepository.findByPrice(number,pageable);
+            }
+            return getPagination(productPage);
+        } else if (sortBy !="0") {
+            Pageable pageable;
+           if (sortBy.equalsIgnoreCase("name")){
+               if (direction.equalsIgnoreCase("asc")){
+                   pageable=PageRequest.of(page,size, Sort.by("ProductName").ascending());
+               }else {
+                   pageable=PageRequest.of(page,size,Sort.by("ProductName").descending());
+               }
+           } else if (sortBy.equalsIgnoreCase("discount")) {
+               if (direction.equalsIgnoreCase("asc")){
+                   pageable=PageRequest.of(page,size, Sort.by("Discount").ascending());
+               }else {
+                   pageable=PageRequest.of(page,size,Sort.by("Discount").descending());
+               }
+           }else {
+               if (direction.equalsIgnoreCase("asc")){
+                   pageable=PageRequest.of(page,size, Sort.by("Price").ascending());
+               }else {
+                   pageable=PageRequest.of(page,size,Sort.by("Price").descending());
+               }
+           }
+            Page<Product> productPage;
+            if (pagination.equals("catalog")){
+                productPage=productRepository.findProductByListCatalogContaining(catalog,pageable);
+            }else {
+                productPage=productRepository.findAll(pageable);
+            }
+            return getPagination(productPage);
+        }else {
+            Pageable pageable;
+            if (sortBy.equalsIgnoreCase("name")){
+                if (direction.equalsIgnoreCase("asc")){
+                    pageable=PageRequest.of(page,size, Sort.by("ProductName").ascending());
+                }else {
+                    pageable=PageRequest.of(page,size,Sort.by("ProductName").descending());
+                }
+            } else if (sortBy.equalsIgnoreCase("discount")) {
+                if (direction.equalsIgnoreCase("asc")){
+                    pageable=PageRequest.of(page,size, Sort.by("Discount").ascending());
+                }else {
+                    pageable=PageRequest.of(page,size,Sort.by("Discount").descending());
+                }
+            }else {
+                if (direction.equalsIgnoreCase("asc")){
+                    pageable=PageRequest.of(page,size, Sort.by("Price").ascending());
+                }else {
+                    pageable=PageRequest.of(page,size,Sort.by("Price").descending());
+                }
+            }
+            Page<Product> productPage;
+            if (searchBy.equals("name")){
+                productPage=productRepository.findByProductNameContaining(name,pageable);
+            } else if (searchBy.equals("discount")) {
+                productPage=productRepository.findByDiscount(number,pageable);
+            } else if (searchBy.equals("catalog")) {
+                productPage=productRepository.findProductByListCatalogContaining(catalog,pageable);
+            } else {
+                productPage=productRepository.findByPrice(number,pageable);
+            }
+            return getPagination(productPage);
+        }
+    }
+
+    @Override
+    public List<Product> listSale() {
+        return employeeDAO.findAllEmployees();
+    }
+
+//    @Override
+//    public List<Integer> listSale() {
+//        return null;
+//    }
 
 
 }

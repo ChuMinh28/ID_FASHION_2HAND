@@ -42,7 +42,7 @@ public class CatalogServiceImp implements CatalogService {
 
     @Override
     public Catalog update(int id, Catalog catalog) {
-        Catalog catalogold=catalogRepository.findById(id).get();
+        Catalog catalogold = catalogRepository.findById(id).get();
         catalogold.setCatalogName(catalog.getCatalogName());
         catalogold.setCatalogStatus(catalog.isCatalogStatus());
         return catalogRepository.save(catalogold);
@@ -50,9 +50,9 @@ public class CatalogServiceImp implements CatalogService {
 
     @Override
     public void delete(int id) {
-      Catalog catalog=catalogRepository.findById(id).get();
-      catalog.setCatalogStatus(false);
-      catalogRepository.save(catalog);
+        Catalog catalog = catalogRepository.findById(id).get();
+        catalog.setCatalogStatus(false);
+        catalogRepository.save(catalog);
     }
 
     @Override
@@ -60,30 +60,45 @@ public class CatalogServiceImp implements CatalogService {
         return catalogRepository.findById(id).get();
     }
 
-    @Override
-    public List<Catalog> searchCatalogByCatalogName(String name) {
-        return catalogRepository.findByCatalogNameContaining(name);
-    }
 
-    @Override
-    public List<Catalog> sortCatalogByCatalogName(String direction) {
-        if (direction.equalsIgnoreCase("asc")){
-            return catalogRepository.findAll(Sort.by("CatalogName").ascending());
-        }else {
-            return catalogRepository.findAll(Sort.by("CatalogName").descending());
-        }
-    }
-
-    @Override
-    public Map<String,Object> getPagging( int page, int size) {
-       Pageable  pageable= PageRequest.of(page,size);
-        Page<Catalog> catalogPage=catalogRepository.findAll(pageable);
-        Map<String,Object> data=new HashMap<>();
-        data.put("Catagory in page",catalogPage.getContent());
-        data.put("Total elements in Catalog",catalogPage.getTotalElements());
-        data.put("Total page in Catalog",catalogPage.getTotalPages());
-        data.put("Size",catalogPage.getSize());
+    public Map<String, Object> getPaggination(Page<Catalog> catalogPage) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("Catagory in page", catalogPage.getContent());
+        data.put("Total elements in Catalog", catalogPage.getTotalElements());
+        data.put("Total page in Catalog", catalogPage.getTotalPages());
+        data.put("Size", catalogPage.getSize());
         return data;
+    }
+
+    @Override
+    public Map<String, Object> getPagging(String search, String sort, String pagination, String name, String direction, int page, int size) {
+        if (search.equals("0")&&sort.equals("0")){
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Catalog> catalogPage=catalogRepository.findAll(pageable);
+            return getPaggination(catalogPage);
+        } else if (search.equals("0")) {
+            Pageable pageable;
+            if (direction.equalsIgnoreCase("asc")) {
+                pageable = PageRequest.of(page, size, Sort.by("CatalogName").ascending());
+            } else {
+                pageable=PageRequest.of(page,size,Sort.by("catalogName").descending());
+            }
+            Page<Catalog> catalogPage=catalogRepository.findAll(pageable);
+            return getPaggination(catalogPage);
+        } else if (sort.equals("0")) {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Catalog> catalogPage=catalogRepository.findByCatalogNameContaining(name,pageable);
+            return getPaggination(catalogPage);
+        }else {
+            Pageable pageable;
+            if (direction.equalsIgnoreCase("asc")) {
+                pageable = PageRequest.of(page, size, Sort.by("CatalogName").ascending());
+            } else {
+                pageable=PageRequest.of(page,size,Sort.by("catalogName").descending());
+            }
+            Page<Catalog> catalogPage=catalogRepository.findByCatalogNameContaining(name,pageable);
+            return getPaggination(catalogPage);
+        }
     }
 
 

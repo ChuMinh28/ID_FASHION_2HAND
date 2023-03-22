@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import ra.dev.model.entity.Size;
 import ra.dev.model.service.SizeService;
 
+import java.util.Map;
+
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/api/v1/size")
@@ -33,7 +35,7 @@ public class SizeController {
         }
     }
 
-    @PatchMapping("updateColor/{sizeID}")
+    @PatchMapping("updateSize/{sizeID}")
     public ResponseEntity<?> updateColor(@PathVariable("sizeID") int sizeID, @RequestBody Size size) {
         try {
             boolean check = sizeService.updateSize(sizeID, size);
@@ -61,5 +63,16 @@ public class SizeController {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Error!!!");
         }
+    }
+    @GetMapping("/action")
+    public Map<String, Object> paginationCatalog(@RequestParam(defaultValue = "0") String search,
+                                                 @RequestParam(defaultValue = "0") String sort,
+                                                 @RequestParam(defaultValue = "0") String pagination,
+                                                 @RequestParam(defaultValue = "c") String name,
+                                                 @RequestParam(defaultValue = "desc") String direction,
+                                                 @RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "3") int size
+    ) {
+        return sizeService.getPagging(search,sort,pagination,name,direction,page, size);
     }
 }
