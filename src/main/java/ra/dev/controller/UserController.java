@@ -138,16 +138,20 @@ public class UserController {
     @GetMapping("searchAndSortAndPaging")
     public ResponseEntity<?> searchAndSortAndPaging(
             @RequestParam("fullName") String fullName,
-            @RequestParam("direction") String direction,
+            @RequestParam(value = "direction", defaultValue = "none") String direction,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Sort.Order order;
+        Pageable pageable;
         if (direction.equals("asc")) {
             order = new Sort.Order(Sort.Direction.ASC, "FullName");
-        } else {
+            pageable = PageRequest.of(page, size, Sort.by(order));
+        } else if (direction.equals("desc")) {
             order = new Sort.Order(Sort.Direction.DESC, "FullName");
+            pageable = PageRequest.of(page, size, Sort.by(order));
+        } else {
+            pageable = PageRequest.of(page,size);
         }
-        Pageable pageable = PageRequest.of(page, size, Sort.by(order));
         Map<String, Object> list = userService.searchByName(fullName, pageable);
         return ResponseEntity.ok(list);
     }
