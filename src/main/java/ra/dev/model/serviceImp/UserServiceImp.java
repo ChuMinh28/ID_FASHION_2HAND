@@ -60,6 +60,7 @@ public class UserServiceImp implements UserService {
             List<GetAllUserResponse> list = new ArrayList<>();
             for (User user : listUser) {
                 GetAllUserResponse userResponse = new GetAllUserResponse();
+                userResponse.setUserID(user.getUserID());
                 userResponse.setUserName(user.getUserName());
                 userResponse.setEmail(user.getEmail());
                 userResponse.setFullName(user.getFullName());
@@ -92,6 +93,7 @@ public class UserServiceImp implements UserService {
         List<GetAllUserResponse> list = new ArrayList<>();
         for (User user : listUser) {
             GetAllUserResponse userResponse = new GetAllUserResponse();
+            userResponse.setUserID(user.getUserID());
             userResponse.setUserName(user.getUserName());
             userResponse.setEmail(user.getEmail());
             userResponse.setFullName(user.getFullName());
@@ -112,6 +114,7 @@ public class UserServiceImp implements UserService {
         try {
             User user = userRepository.findById(userID).get();
             UserResponse userResponse = new UserResponse();
+            userResponse.setUserID(user.getUserID());
             userResponse.setUserName(user.getUserName());
             userResponse.setEmail(user.getEmail());
             userResponse.setFullName(user.getFullName());
@@ -205,6 +208,7 @@ public class UserServiceImp implements UserService {
         List<GetAllUserResponse> list = new ArrayList<>();
         for (User user : listUser) {
             GetAllUserResponse userResponse = new GetAllUserResponse();
+            userResponse.setUserID(user.getUserID());
             userResponse.setUserName(user.getUserName());
             userResponse.setEmail(user.getEmail());
             userResponse.setFullName(user.getFullName());

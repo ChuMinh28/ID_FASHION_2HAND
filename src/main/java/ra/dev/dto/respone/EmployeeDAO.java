@@ -1,6 +1,4 @@
 package ra.dev.dto.respone;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ra.dev.model.entity.Product;
 
@@ -13,9 +11,9 @@ public class EmployeeDAO {
     @PersistenceContext
     private EntityManager entityManager;
     public List<Product> findAllEmployees() {
-        String sql = "select p.ProductID, p.Description, p.Gender, p.Image, p.Limited, p.Price,p.ProductName, p.ProductStatus, p.Shipping, p.Title\n" +
+        String sql = "select p.ProductID, p.Description, p.Gender, p.Discount, p.Image, p.Limited, p.Price,p.ProductName, p.ProductStatus, p.Shipping, p.Title\n" +
                 "from orderdetail o inner join product p on o.productID = p.ProductID\n" +
-                "where (select od.OrderStatus from orders od where od.OrderID = o.orderID) = 3\n" +
+                "where (select od.OrderStatus from orders od where od.OrderID = o.orderID) = 3||4\n" +
                 "group by o.productID\n" +
                 "order by sum(o.Quantity) DESC";
         Query query = entityManager.createNativeQuery(sql, Product.class);
