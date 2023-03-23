@@ -93,12 +93,17 @@ public class ProductController {
     }
 
     @GetMapping("getBestSale2")
-    public List<Product> listBestSale() {
+    public List<GetProduct> listBestSale() {
         return productService.listSale();
     }
 
     @GetMapping("/findProductByCatalog")
     public Set<GetProductByCat> findProductByCatalog(@RequestBody ProductByCat listCat) {
         return productService.findProductByCatalog(listCat);
+    }
+
+    @GetMapping("top10Revenue")
+    public List<GetProduct> getListRevenue(){
+        return null;
     }
 }

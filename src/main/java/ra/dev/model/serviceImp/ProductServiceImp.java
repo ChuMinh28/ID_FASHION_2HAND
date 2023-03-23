@@ -455,7 +455,24 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
-    public List<Product> listSale() {
-        return employeeDAO.findAllEmployees();
+    public List<GetProduct> listSale() {
+        List<Product> productList = employeeDAO.findAllEmployees();
+        List<GetProduct> listShow = new ArrayList<>();
+        for (Product product : productList) {
+            GetProduct getProduct = new GetProduct(
+                    product.getProductID(),
+                    product.getProductName(),
+                    product.getImage(),
+                    product.getTitle(),
+                    product.getPrice(),
+                    product.getDiscount());
+            listShow.add(getProduct);
+        }
+        return listShow;
+    }
+
+    @Override
+    public List<GetProduct> getListRevenue() {
+        return null;
     }
 }
