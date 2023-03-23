@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ra.dev.dto.request.CreateProduct;
 import ra.dev.dto.request.ProductByCat;
 import ra.dev.dto.respone.*;
 import ra.dev.model.entity.*;
@@ -47,10 +46,8 @@ public class ProductServiceImp implements ProductService {
                     product.getProductName(),
                     product.getImage(),
                     product.getTitle(),
-
-
-                    product.getPrice(), product.getDiscount());
-
+                    product.getPrice(),
+                    product.getDiscount());
             getProductsList.add(getProduct);
         }
         return getProductsList;
@@ -75,8 +72,8 @@ public class ProductServiceImp implements ProductService {
                         product.getProductName(),
                         product.getImage(),
                         product.getTitle(),
-
-                        product.getPrice(), product.getDiscount());
+                        product.getPrice(),
+                        product.getDiscount());
 
                 if (productList.contains(getProduct)) {
                     continue;
@@ -159,11 +156,8 @@ public class ProductServiceImp implements ProductService {
                         product.getProductName(),
                         product.getImage(),
                         product.getTitle(),
-
-
-                        product.getPrice(), product.getDiscount());
-
-
+                        product.getPrice(),
+                        product.getDiscount());
                 if (productList.contains(getProduct)) {
                     continue;
                 } else {
@@ -207,8 +201,8 @@ public class ProductServiceImp implements ProductService {
                         product.getProductName(),
                         product.getImage(),
                         product.getTitle(),
-
-                        product.getPrice(), product.getDiscount());
+                        product.getPrice(),
+                        product.getDiscount());
 
                 if (productList.contains(getProduct)) {
                     continue;
@@ -294,7 +288,6 @@ public class ProductServiceImp implements ProductService {
         product.setLimited(createProduct.isLimited());
         product.setImage(createProduct.getImage());
         product.setShipping(createProduct.isShipping());
-
         product.setListCatalog(catalogList);
         productRepository.save(product);
         for (int i = 0; i < createProduct.getListImage().size(); i++) {
@@ -438,8 +431,8 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
-    public List<GetProductByCat> findProductByCatalog(ProductByCat productByCat) {
-        List<GetProductByCat> productList = new ArrayList<>();
+    public Set<GetProductByCat> findProductByCatalog(ProductByCat productByCat) {
+        Set<GetProductByCat> productList = new HashSet<>();
         for (Integer id : productByCat.getProductByCatalog()) {
             Catalog catalog = catalogRepository.findById(id).get();
             if (catalog != null) {

@@ -10,13 +10,12 @@ import ra.dev.dto.respone.GetProductByCat;
 import ra.dev.dto.respone.ProductDetailGet;
 import ra.dev.dto.respone.ProductSale;
 import ra.dev.model.entity.Product;
-import ra.dev.model.entity.ProductDetail;
 
 import ra.dev.model.service.ProductService;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
@@ -99,7 +98,7 @@ public class ProductController {
     }
 
     @GetMapping("/findProductByCatalog")
-    public List<GetProductByCat> findProductByCatalog(@RequestBody ProductByCat listCat) {
+    public Set<GetProductByCat> findProductByCatalog(@RequestBody ProductByCat listCat) {
         return productService.findProductByCatalog(listCat);
     }
 }

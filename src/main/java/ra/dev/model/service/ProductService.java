@@ -11,6 +11,7 @@ import ra.dev.model.entity.Product;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface ProductService {
     List<GetProduct> getAll();
@@ -24,10 +25,10 @@ public interface ProductService {
     Product updateProduct(int productID, Product updateProduct);
     List<Product> listSale();
 
-    Map<String,Object> getPagging(int id, int number,String searchBy,String sortBy,String pagination,String name,String direction,int page, int size);
+    Map<String,Object> getPagging(int id, int number,String searchBy,String sortBy,String name,String direction,int page, int size);
 
 
 
-   List<GetProductByCat> findProductByCatalog(ProductByCat productByCat);
+    Set<GetProductByCat> findProductByCatalog(ProductByCat productByCat);
 
 }
