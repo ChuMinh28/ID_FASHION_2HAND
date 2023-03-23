@@ -20,12 +20,19 @@ public class OrderDetailServiceImp implements OrderDetailService {
     OrderRepository orderRepository;
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    ColorRepository colorRepository;
+    @Autowired
+    SizeRepository sizeRepository;
     @Autowired
     ProductDetailRepository productDetailRepository;
     @Override
     public OrderDetail createCart(CartCreate cartCreate) {
         OrderDetail orderDetail = new OrderDetail();
         User user = userRepository.findById(cartCreate.getUserID()).get();
+        Color color=colorRepository.findById(cartCreate.getColorID()).get();
+        Size size=sizeRepository.findById(cartCreate.getColorID()).get();
         List<Order> orderList = orderRepository.findOrderByOrderStatus(1);
         boolean checkOrder = false;
         Order newOrder = new Order();
@@ -39,6 +46,7 @@ public class OrderDetailServiceImp implements OrderDetailService {
         if(checkOrder){
             Product product = productRepository.findById(cartCreate.getProductID()).get();
             ProductDetail productDetail = productDetailRepository.findProductDetailBySizeSizeIDAndColorColorIDAndProductProductID(cartCreate.getSizeID(),cartCreate.getColorID(),cartCreate.getProductID());
+
             boolean check = false;
             OrderDetail orderDetailUpdate =new OrderDetail();
             for (OrderDetail orderDetail1 : newOrder.getListOrderDetail()) {
@@ -53,8 +61,8 @@ public class OrderDetailServiceImp implements OrderDetailService {
                 orderDetailUpdate.setProduct(product);
                 orderDetailUpdate.setQuantity(orderDetailUpdate.getQuantity()+ cartCreate.getQuantity());
                 orderDetailUpdate.setTotalAmount(orderDetailUpdate.getTotalAmount()+cartCreate.getQuantity()*(product.getPrice()*100-product.getDiscount())/100);
-                orderDetailUpdate.setColor(productDetail.getColor().getColorName());
-                orderDetailUpdate.setSize(productDetail.getSize().getSizeName());
+                orderDetailUpdate.setColor(color.getColorName());
+                orderDetailUpdate.setSize(size.getSizeName());
                 orderDetailUpdate.setPrice(product.getPrice());
                 return orderDetailRepository.save(orderDetailUpdate);
             }else {
@@ -62,8 +70,8 @@ public class OrderDetailServiceImp implements OrderDetailService {
                 orderDetail.setProduct(product);
                 orderDetail.setQuantity(cartCreate.getQuantity());
                 orderDetail.setTotalAmount(cartCreate.getQuantity()*(product.getPrice()*100-product.getDiscount())/100);
-                orderDetail.setColor(productDetail.getColor().getColorName());
-                orderDetail.setSize(productDetail.getSize().getSizeName());
+                orderDetail.setColor(color.getColorName());
+                orderDetail.setSize(size.getSizeName());
                 orderDetail.setPrice(product.getPrice());
                 orderDetailRepository.save(orderDetail);
             }
@@ -78,8 +86,8 @@ public class OrderDetailServiceImp implements OrderDetailService {
             orderDetail.setProduct(product);
             orderDetail.setQuantity(cartCreate.getQuantity());
             orderDetail.setTotalAmount(cartCreate.getQuantity()*(product.getPrice()*100-product.getDiscount())/100);
-            orderDetail.setColor(productDetail.getColor().getColorName());
-            orderDetail.setSize(productDetail.getSize().getSizeName());
+            orderDetail.setColor(color.getColorName());
+            orderDetail.setSize(size.getSizeName());
             orderDetail.setPrice(product.getPrice());
             orderDetailRepository.save(orderDetail);
         }
