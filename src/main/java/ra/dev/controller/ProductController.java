@@ -90,7 +90,7 @@ public class ProductController {
                                                  @RequestParam(defaultValue = "desc") String direction,
                                                  @RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "3") int size) {
-        return productService.getPagging(catalogID, number, searchBy, sortBy, name, direction, page, size);
+        return productService.getPagging(catalogID,number,searchBy,sortBy,name,direction,page,size);
     }
 
     @GetMapping("getBestSale2")

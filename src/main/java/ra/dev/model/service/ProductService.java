@@ -24,7 +24,7 @@ public interface ProductService {
     Product updateProduct(int productID, Product updateProduct);
     List<Product> listSale();
 
-    Map<String,Object> getPagging(int id, int number,String searchBy,String sortBy,String pagination,String name,String direction,int page, int size);
+    Map<String,Object> getPagging(int id, int number,String searchBy,String sortBy,String name,String direction,int page, int size);
 
 
 

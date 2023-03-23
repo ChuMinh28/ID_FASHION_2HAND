@@ -294,7 +294,6 @@ public class ProductServiceImp implements ProductService {
         product.setLimited(createProduct.isLimited());
         product.setImage(createProduct.getImage());
         product.setShipping(createProduct.isShipping());
-
         product.setListCatalog(catalogList);
         productRepository.save(product);
         for (int i = 0; i < createProduct.getListImage().size(); i++) {
