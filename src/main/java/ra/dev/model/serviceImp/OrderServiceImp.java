@@ -7,15 +7,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ra.dev.dto.request.OrderCreate;
-import ra.dev.dto.respone.OrderDetailResponse;
-import ra.dev.dto.respone.OrderRecentResponse;
-import ra.dev.dto.respone.OrderResponse;
-
-import ra.dev.dto.respone.UserResponse;
-import ra.dev.model.entity.*;
+import ra.dev.dto.respone.*;
 
 import ra.dev.model.entity.Order;
 import ra.dev.model.entity.OrderDetail;
@@ -27,7 +23,7 @@ import ra.dev.model.repository.UserRepository;
 import ra.dev.model.service.OrderService;
 import ra.dev.security.CustomUserDetails;
 
-
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
@@ -127,11 +123,15 @@ public class OrderServiceImp implements OrderService {
     public Order checkout(OrderCreate orderCreate) {
         User users = userRepository.findById(orderCreate.getUserID()).get();
         List<Order> listOrder = orderRepository.findOrderByOrderStatus(1);
+        int price = 0;
         boolean checkOrder = false;
         Order newOrder = new Order();
         for (Order orserST1 : listOrder) {
             if (orserST1.getUser().getUserID() == orderCreate.getUserID()) {
                 checkOrder = true;
+                for (OrderDetail o : orserST1.getListOrderDetail()) {
+                    price += o.getTotalAmount();
+                }
                 newOrder = orserST1;
                 break;
             }
@@ -142,7 +142,7 @@ public class OrderServiceImp implements OrderService {
             newOrder.setEmail(orderCreate.getEmail());
             newOrder.setOrderStatus(2);
             newOrder.setFullName(orderCreate.getFullName());
-            newOrder.setTotalAmount(orderCreate.getTotalAmout());
+            newOrder.setTotalAmount(price);
             newOrder.setUser(users);
             orderRepository.save(newOrder);
         }
@@ -159,7 +159,7 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
-    public Map<String, Object> getPagging( int number, String searchBy, String name, String sortBy, String direction, int page, int size) {
+    public Map<String, Object> getPagging(int number, String searchBy, String name, String sortBy, String direction, int page, int size) {
         if (searchBy.equals("0") && sortBy.equals("0")) {
             Pageable pageable = PageRequest.of(page, size);
             Page<Order> orderPage = orderRepository.findAll(pageable);
@@ -238,6 +238,42 @@ public class OrderServiceImp implements OrderService {
         data.put("Size", orders.getSize());
         data.put("TotalPage", orders.getTotalPages());
         return data;
+    }
+
+
+    @Override
+    public ResponseEntity<?> getRevenueByAddress(String address, LocalDate start, LocalDate end) {
+        List<Order> orderList = orderRepository.findByOrderStatusAndAddressEqualsAndOrderDateBetween(4, address, start, end);
+        List<RevenueByAddress> addressList = new ArrayList<>();
+        long daysBetween = ChronoUnit.DAYS.between(start,end);
+        for (int i = 0; i <=daysBetween ; i++) {
+            RevenueByAddress revenue=new RevenueByAddress();
+            revenue.setId(i+1);
+            revenue.setDateOrder(start.plusDays(i));
+            revenue.setAddress(address);
+            revenue.setRevenue(0);
+
+            for (Order o:orderList ) {
+                if (o.getOrderDate().equals(revenue.getDateOrder())){
+                    revenue.setRevenue(revenue.getRevenue()+o.getTotalAmount());
+
+                }
+            }
+            addressList.add(revenue);
+        }
+
+
+        return ResponseEntity.ok(addressList);
+
+
+    }
+
+    public int getTotalRevenue(List<Order> orderList) {
+        int revenue = 0;
+        for (Order o : orderList) {
+            revenue += o.getTotalAmount();
+        }
+        return revenue;
     }
 
 
