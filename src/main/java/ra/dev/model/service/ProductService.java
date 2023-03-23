@@ -11,6 +11,7 @@ import ra.dev.model.entity.Product;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface ProductService {
     List<GetProduct> getAll();
@@ -28,6 +29,6 @@ public interface ProductService {
 
 
 
-   List<GetProductByCat> findProductByCatalog(ProductByCat productByCat);
+    Set<GetProductByCat> findProductByCatalog(ProductByCat productByCat);
 
 }
