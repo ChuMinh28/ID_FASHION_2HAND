@@ -12,7 +12,17 @@ import java.time.LocalDate;
 @RequestMapping("/api/v1/report")
 public class ReportController {
     @Autowired
-    OrderService orderService;
+    private OrderService orderService;
+
+    @GetMapping("revenueByDate")
+    public ResponseEntity<?> getRevenueByDate(
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        return ResponseEntity.ok(orderService.getRevenueByDate(start,end));
+    }
+
 
     @GetMapping("/revenuebyAddress")
     public ResponseEntity<?> revenueByAddresses(@RequestParam String address,
@@ -22,5 +32,4 @@ public class ReportController {
         LocalDate endDate = LocalDate.parse(end);
         return orderService.getRevenueByAddress(address, startDate, endDate);
     }
-
 }
