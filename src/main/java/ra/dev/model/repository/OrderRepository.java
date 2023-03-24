@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ra.dev.model.entity.Order;
+import ra.dev.model.entity.OrderDetail;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -33,5 +34,13 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     Page<Order> findByAddressContaining(Pageable pageable, String name);
 
-    List<Order> findByOrderStatusAndAddressEqualsAndOrderDateBetween(Integer status, String address, LocalDate start, LocalDate end);
+    Page<Order> findOrderByOrderDateBetween(LocalDate start,LocalDate end,Pageable pageable);
+   Page<Order> findByOrOrderStatus(int status,Pageable pageable);
+   Page<Order> findByAddressContaining(Pageable pageable,String name);
+   List<Order> findOrderByOrderDateBetween(LocalDate start,LocalDate end);
+   Order findOrderByListOrderDetailContaining(OrderDetail orderDetail);
+
+
+    Page<Order> findByOrOrderStatus(int status,Pageable pageable);
+    List<Order> findByOrderStatusAndAddressEqualsAndOrderDateBetween(Integer status,String address,LocalDate start,LocalDate end);
 }

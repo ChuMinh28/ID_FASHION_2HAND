@@ -21,4 +21,5 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail,Int
     List<ProductDetail> findProductDetailByProductLimited(Boolean status);
     List<ProductDetail> findProductDetailByProductProductID(int productID);
 
+
 }
