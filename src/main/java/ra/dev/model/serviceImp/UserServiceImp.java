@@ -20,8 +20,10 @@ import org.springframework.stereotype.Service;
 import ra.dev.dto.request.UpdateUserRequest;
 import ra.dev.dto.respone.*;
 import ra.dev.model.entity.ERole;
+import ra.dev.model.entity.Product;
 import ra.dev.model.entity.Roles;
 import ra.dev.model.entity.User;
+import ra.dev.model.repository.ProductRepository;
 import ra.dev.model.repository.RoleRepository;
 import ra.dev.model.repository.UserRepository;
 import ra.dev.model.service.UserService;
@@ -46,6 +48,8 @@ public class UserServiceImp implements UserService {
     private PasswordEncoder encoder;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Value("${ra.jwt.secret}")
     private String JWT_SECRET;
@@ -287,6 +291,62 @@ public class UserServiceImp implements UserService {
                 List<User> listUser = userRepository.findAllByCreatedBetween(start, end);
                 return changeData(listUser);
         } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public boolean addToWishList(int productID) {
+        CustomUserDetails customUserDetail = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            User user = userRepository.findById(customUserDetail.getUserId()).get();
+            Product product = productRepository.findById(productID).get();
+            user.getWishList().add(product);
+            userRepository.save(user);
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean removeFromWishList(int productID) {
+        CustomUserDetails customUserDetail = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            User user = userRepository.findById(customUserDetail.getUserId()).get();
+            for (Product pro:user.getWishList()) {
+                if (pro.getProductID()==productID) {
+                    user.getWishList().remove(pro);
+                    break;
+                }
+            }
+            userRepository.save(user);
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public List<WishListResponse> getUserWishList() {
+        CustomUserDetails customUserDetail = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            User user = userRepository.findById(customUserDetail.getUserId()).get();
+            List<WishListResponse> list = new ArrayList<>();
+            for (Product product:user.getWishList()) {
+                WishListResponse wishList = new WishListResponse();
+                wishList.setProductName(product.getProductName());
+                wishList.setImage(product.getImage());
+                wishList.setTitle(product.getTitle());
+                wishList.setPrice(product.getPrice());
+                wishList.setLimited(product.isLimited()?"Limited":"Unlimited");
+                list.add(wishList);
+            }
+            return list;
+        }catch (Exception e) {
             e.printStackTrace();
             return null;
         }
