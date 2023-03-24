@@ -43,6 +43,10 @@ public class User {
     @JsonIgnore
     private List<Order> listOrder = new ArrayList<>();
     @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "Wishlist",joinColumns = @JoinColumn(name = "UserID"),
+            inverseJoinColumns = @JoinColumn(name = "productID"))
+    private Set<Product> wishList = new HashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "User_Role", joinColumns = @JoinColumn(name = "userID"), inverseJoinColumns = @JoinColumn(name = "roleId"))
     private Set<Roles> listRoles = new HashSet<>();
 }

@@ -10,6 +10,4 @@ public class ProductRevenue {
     private LocalDate date;
     private String ProductName;
     private int totalAmout;
-
-
 }
