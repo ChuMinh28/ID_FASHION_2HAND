@@ -1,6 +1,9 @@
 package ra.dev.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ra.dev.dto.request.ProductByCat;
@@ -13,6 +16,7 @@ import ra.dev.model.entity.Product;
 
 import ra.dev.model.service.ProductService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,12 +39,10 @@ public class ProductController {
                                           @RequestParam String sizeName) {
         return productService.sortAndFilter(direcion, colorName, sizeName);
     }
-
     @GetMapping("getBestSale")
     public List<ProductSale> getProductBestSale() {
         return productService.getBestSale();
     }
-
     @GetMapping("getProductByGender")
     public List<GetProduct> getByGender(
             @RequestParam String direction,
@@ -50,7 +52,6 @@ public class ProductController {
     ) {
         return productService.getByGender(direction, colorName, sizeName, sex);
     }
-
     @GetMapping("getByFilter")
     public List<GetProduct> getByFilter(
             @RequestParam String colorName,
@@ -58,28 +59,22 @@ public class ProductController {
     ) {
         return productService.getByFilter(colorName, sizeName);
     }
-
     @GetMapping("getListLimited")
     public List<GetProduct> getProductLimited() {
         return productService.getProductLimited();
     }
-
     @GetMapping("getProductDetail/{productID}")
     public ProductDetailGet getProduct(@PathVariable("productID") int productID) {
         return productService.getDetail(productID);
     }
-
     @PostMapping("create")
     public Product createProduct(@RequestBody Product createProduct) {
         return productService.createProduct(createProduct);
     }
-
     @PutMapping("updateProduct/{productID}")
     public Product updateProduct(@PathVariable("productID") int productID, @RequestBody Product productUpdate) {
         return productService.updateProduct(productID, productUpdate);
     }
-
-
     @GetMapping("/action")
     public Map<String, Object> paginationProduct(@RequestParam("catalogID") int catalogID,
                                                  @RequestParam(defaultValue = "10") int number,
@@ -91,7 +86,6 @@ public class ProductController {
                                                  @RequestParam(defaultValue = "3") int size) {
         return productService.getPagging(catalogID,number,searchBy,sortBy,name,direction,page,size);
     }
-
     @GetMapping("getBestSale2")
     public List<GetProduct> listBestSale() {
         return productService.listSale();
@@ -101,9 +95,12 @@ public class ProductController {
     public Set<GetProductByCat> findProductByCatalog(@RequestBody ProductByCat listCat) {
         return productService.findProductByCatalog(listCat);
     }
-
     @GetMapping("top10Revenue")
-    public List<GetProduct> getListRevenue(){
-        return null;
+    public ResponseEntity<?> getListRevenue(@RequestParam String start,
+                                        @RequestParam String end) {
+        LocalDate sxstart = LocalDate.parse(start);
+        LocalDate sxend = LocalDate.parse(end);
+        return ResponseEntity.ok(productService.getListRevenue(sxstart, sxend));
+
     }
 }

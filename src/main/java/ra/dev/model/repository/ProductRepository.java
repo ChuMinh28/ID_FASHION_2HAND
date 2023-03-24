@@ -5,10 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import ra.dev.model.entity.Catalog;
-import ra.dev.model.entity.Collections;
-import ra.dev.model.entity.Product;
-import ra.dev.model.entity.ProductDetail;
+import ra.dev.model.entity.*;
+
 import javax.persistence.EntityManager;
 
 import javax.persistence.PersistenceContext;
@@ -26,5 +24,6 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     Page<Product> findByProductNameContaining(String name,Pageable pageable);
     Page<Product> findByDiscount(int number,Pageable pageable);
     Page<Product> findByPrice(int number,Pageable pageable);
+    List<Product> findByOrderDetailsIn(List<OrderDetail> orderDetailList);
 
 }

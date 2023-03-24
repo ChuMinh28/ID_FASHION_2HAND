@@ -12,6 +12,8 @@ import ra.dev.model.entity.*;
 import ra.dev.model.repository.*;
 import ra.dev.model.service.ProductService;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.Collections;
 
@@ -21,7 +23,6 @@ public class ProductServiceImp implements ProductService {
     ProductRepository productRepository;
     @Autowired
     ProductDetailRepository productDetailRepository;
-
     @Autowired
     CatalogRepository catalogRepository;
     @Autowired
@@ -35,6 +36,8 @@ public class ProductServiceImp implements ProductService {
     OrderDetailRepository orderDetailRepository;
     @Autowired
     EmployeeDAO employeeDAO;
+    @Autowired
+    OrderRepository orderRepository;
 
     @Override
     public List<GetProduct> getAll() {
@@ -454,6 +457,7 @@ public class ProductServiceImp implements ProductService {
         return productList;
     }
 
+
     @Override
     public List<GetProduct> listSale() {
         List<Product> productList = employeeDAO.findAllEmployees();
@@ -472,7 +476,68 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
-    public List<GetProduct> getListRevenue() {
-        return null;
+    public List<RevenueLisst> getListRevenue(LocalDate start, LocalDate end) {
+        List<Order> orderList = orderRepository.findOrderByOrderDateBetween(start, end);
+        List<OrderDetail> orderDetailList = orderDetailRepository.findByOrderIn(orderList);
+        List<ProductRevenue> listRevenues = new ArrayList<>();
+        for (OrderDetail orderDetail : orderDetailList) {
+            Order order = orderRepository.findOrderByListOrderDetailContaining(orderDetail);
+            if (listRevenues.size() == 0) {
+                ProductRevenue revenue = new ProductRevenue();
+                revenue.setDate(order.getOrderDate());
+                revenue.setProductID(orderDetail.getProduct().getProductID());
+                revenue.setProductName(productRepository.findById(orderDetail.getProduct().getProductID()).get().getProductName());
+                revenue.setTotalAmout(orderDetail.getTotalAmount());
+                listRevenues.add(revenue);
+            } else {
+                ProductRevenue revenueReserve = new ProductRevenue();
+                boolean check = false;
+                for (ProductRevenue revenueList : listRevenues) {
+                    int findID = orderDetail.getProduct().getProductID();
+                    if (revenueList.getProductID() == findID && revenueList.getDate().equals(order.getOrderDate())) {
+                        check = true;
+                        revenueReserve = revenueList;
+                        break;
+                    } else {
+                        check = false;
+                        Product product = productRepository.findById(orderDetail.getProduct().getProductID()).get();
+                        revenueReserve.setDate(order.getOrderDate());
+                        revenueReserve.setProductID(orderDetail.getProduct().getProductID());
+                        revenueReserve.setProductName(product.getProductName());
+                        revenueReserve.setTotalAmout(orderDetail.getTotalAmount());
+                    }
+                }
+                if (check) {
+                    revenueReserve.setTotalAmout(revenueReserve.getTotalAmout() + orderDetail.getTotalAmount());
+                } else {
+                    listRevenues.add(revenueReserve);
+                }
+            }
+        }
+        List<RevenueLisst> revenueLissts = new ArrayList<>();
+        long daysBetween = ChronoUnit.DAYS.between(start, end);
+        for (int i = 0; i < daysBetween; i++) {
+            RevenueLisst revenueLisst = new RevenueLisst();
+            revenueLisst.setDate(start.plusDays(i));
+            List<ProductRevenue> revenueList = new ArrayList<>();
+            for (ProductRevenue productRevenue : listRevenues) {
+                if (productRevenue.getDate().equals(revenueLisst.getDate())){
+                    revenueList.add(productRevenue);
+                }
+            }
+            Collections.sort(revenueList, new Comparator<ProductRevenue>() {
+                @Override
+                public int compare(ProductRevenue b1, ProductRevenue b2) {
+                    return b2.getTotalAmout() - b1.getTotalAmout();
+                }
+            });
+            revenueLisst.setRevenueList(revenueList);
+            revenueLissts.add(revenueLisst);
+        }
+
+
+        return revenueLissts;
     }
+
+
 }
