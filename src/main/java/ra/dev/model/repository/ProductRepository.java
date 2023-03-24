@@ -25,5 +25,4 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     Page<Product> findByDiscount(int number,Pageable pageable);
     Page<Product> findByPrice(int number,Pageable pageable);
     List<Product> findByOrderDetailsIn(List<OrderDetail> orderDetailList);
-
 }

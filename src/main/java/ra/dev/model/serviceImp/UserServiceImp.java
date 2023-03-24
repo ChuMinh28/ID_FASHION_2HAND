@@ -352,6 +352,27 @@ public class UserServiceImp implements UserService {
         }
     }
 
+    @Override
+    public Map<String, Integer> favoriteProduct() {
+        List<Integer> list = userRepository.favoriteProduct();
+        List<Product> listProduct = new ArrayList<>();
+        for (Integer id:list) {
+            Product product = productRepository.findById(id).get();
+            listProduct.add(product);
+        }
+        Map<String, Integer> data = new HashMap<>();
+        for (Product product:listProduct) {
+            String key = product.getProductName();
+            if (data.containsKey(key)) {
+                int newQuantity = data.get(key) +1;
+                data.put(product.getProductName(),newQuantity);
+            } else {
+                data.put(product.getProductName(),1);
+            }
+        }
+        return data;
+    }
+
     private List<NewUserByDays> changeData(List<User> list) {
         List<NewUserByDays> listUserResponse = new ArrayList<>();
         for (User user : list) {
