@@ -287,6 +287,7 @@ public class UserServiceImp implements UserService {
                 List<User> listUser = userRepository.findAllByCreatedBetween(start, end);
                 return changeData(listUser);
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
