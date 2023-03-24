@@ -24,6 +24,11 @@ public class ReportController {
     @Autowired
     private UserService userService;
 
+    @GetMapping("favoriteProduct")
+    public ResponseEntity<?> favoriteProduct() {
+        return ResponseEntity.ok(userService.favoriteProduct());
+    }
+
     @GetMapping("getNewUserByDate")
     public ResponseEntity<?> getNewUserByDate(@RequestParam int days) {
         List<NewUserByDays> list = userService.newUserByDate(days);

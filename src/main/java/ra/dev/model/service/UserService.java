@@ -6,6 +6,7 @@ import ra.dev.dto.request.UpdateUserRequest;
 import ra.dev.dto.respone.NewUserByDays;
 import ra.dev.dto.respone.UserResponse;
 import ra.dev.dto.respone.WishListResponse;
+
 import ra.dev.model.entity.User;
 import ra.dev.dto.request.LoginRequest;
 import ra.dev.dto.request.SignupRequest;
@@ -33,4 +34,5 @@ public interface UserService {
     boolean addToWishList(int productID);
     boolean removeFromWishList(int productID);
     List<WishListResponse> getUserWishList();
+    Map<String, Integer> favoriteProduct();
 }
