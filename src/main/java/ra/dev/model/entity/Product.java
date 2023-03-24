@@ -49,6 +49,9 @@ public class Product {
     private List<Collections> listCollection;
     @OneToMany(mappedBy = "product")
     List<Image> listImage = new ArrayList<>();
+    @OneToMany(mappedBy = "product")
+    List<OrderDetail> orderDetails = new ArrayList<>();
+
 
 
 }
