@@ -293,6 +293,55 @@ public class OrderServiceImp implements OrderService {
         return ResponseEntity.ok(addressList);
     }
 
+    @Override
+    public List<NewUserHasOrder> newUserHasOrder(int days) {
+        try {
+            LocalDate end = LocalDate.now();
+            LocalDate start = end.minusDays(days);
+            List<User> listUser = userRepository.findAllByCreatedBetween(start, end);
+            List<NewUserHasOrder> list = new ArrayList<>();
+            for (User user:listUser) {
+                List<Order> listOrder = orderRepository.findAllByUser_UserID(user.getUserID());
+                if (!listOrder.isEmpty()) {
+                    NewUserHasOrder userResponse = new NewUserHasOrder();
+                    userResponse.setUserID(user.getUserID());
+                    userResponse.setUserName(user.getUserName());
+                    userResponse.setEmail(user.getEmail());
+                    userResponse.setCreated(user.getCreated());
+                    userResponse.setFullName(user.getFullName());
+                    userResponse.setPhoneNumber(user.getPhoneNumber());
+                    userResponse.setAddress(user.getAddress());
+                    for (Order order:user.getListOrder()) {
+                        OrderRecentResponse orderRecentResponse = new OrderRecentResponse();
+                        orderRecentResponse.setOrderID(order.getOrderID());
+                        orderRecentResponse.setCreated(order.getOrderDate());
+                        if (order.getOrderStatus() == 2) {
+                            orderRecentResponse.setOrderStatus("Pending");
+                        }
+                        if (order.getOrderStatus() == 3) {
+                            orderRecentResponse.setOrderStatus("Confirmed");
+                        }
+                        if (order.getOrderStatus() == 4) {
+                            orderRecentResponse.setOrderStatus("Complete");
+                        }
+                        orderRecentResponse.setOrderID(order.getOrderID());
+                        orderRecentResponse.setPaymentMethod("Cash");
+                        orderRecentResponse.setTotalAmount(order.getTotalAmount());
+                        userResponse.getListOrder().add(orderRecentResponse);
+                    }
+                    list.add(userResponse);
+                }
+            }
+            List<NewUserHasOrder> listResponse = list.stream()
+                    .sorted(Comparator.comparing(NewUserHasOrder::getCreated).reversed())
+                    .collect(Collectors.toList());
+            return listResponse;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public int getTotalRevenue(List<Order> orderList) {
         int revenue = 0;
         for (Order o : orderList) {
