@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +27,8 @@ public class User {
     private String userName;
     @Column(name = "Password")
     private String password;
+    @Column(name = "Created")
+    private LocalDate created;
     @Column(name = "FullName")
     private String fullName;
     @Column(name = "PhoneNumber")
