@@ -3,8 +3,15 @@ package ra.dev.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ra.dev.dto.respone.NewUserByDays;
+import ra.dev.dto.respone.UserResponse;
 import ra.dev.model.service.OrderService;
+import ra.dev.model.service.UserService;
+
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @CrossOrigin(origins = "http://localhost:8080")
@@ -13,6 +20,21 @@ import java.time.LocalDate;
 public class ReportController {
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("getNewUserByDate")
+    public ResponseEntity<?> getNewUserByDate(@RequestParam int days) {
+        List<NewUserByDays> list = userService.newUserByDate(days);
+        if (list != null) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("Account has been created",list.size());
+            data.put("List account", list);
+            return ResponseEntity.ok(data);
+        } else {
+            return ResponseEntity.ok("There isn't account has been created!");
+        }
+    }
 
     @GetMapping("revenueByDate")
     public ResponseEntity<?> getRevenueByDate(

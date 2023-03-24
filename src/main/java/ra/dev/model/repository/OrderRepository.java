@@ -27,6 +27,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 //    Page<Order> findByOrderDateContaining(@Param("start") LocalDate start,@Param("end") LocalDate end,Pageable pageable );
 
     Page<Order> findOrderByOrderDateBetween(LocalDate start, LocalDate end, Pageable pageable);
+
     List<Order> findOrderByOrderDateBetweenAndOrderStatus(LocalDate start, LocalDate end, int orderStatus);
 
     Page<Order> findByOrOrderStatus(int status, Pageable pageable);
@@ -41,7 +42,5 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
 
     Page<Order> findByOrOrderStatus(int status,Pageable pageable);
-    Page<Order> findByAddressContaining(Pageable pageable,String name);
     List<Order> findByOrderStatusAndAddressEqualsAndOrderDateBetween(Integer status,String address,LocalDate start,LocalDate end);
-
 }

@@ -282,7 +282,6 @@ public class OrderServiceImp implements OrderService {
             revenue.setDateOrder(start.plusDays(i));
             revenue.setAddress(address);
             revenue.setRevenue(0);
-
             for (Order o:orderList ) {
                 if (o.getOrderDate().equals(revenue.getDateOrder())){
                     revenue.setRevenue(revenue.getRevenue()+o.getTotalAmount());
@@ -291,11 +290,7 @@ public class OrderServiceImp implements OrderService {
             }
             addressList.add(revenue);
         }
-
-
         return ResponseEntity.ok(addressList);
-
-
     }
 
     public int getTotalRevenue(List<Order> orderList) {

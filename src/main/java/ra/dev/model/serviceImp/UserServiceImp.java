@@ -18,8 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ra.dev.dto.request.UpdateUserRequest;
-import ra.dev.dto.respone.GetAllUserResponse;
-import ra.dev.dto.respone.UserResponse;
+import ra.dev.dto.respone.*;
 import ra.dev.model.entity.ERole;
 import ra.dev.model.entity.Roles;
 import ra.dev.model.entity.User;
@@ -28,10 +27,10 @@ import ra.dev.model.repository.UserRepository;
 import ra.dev.model.service.UserService;
 import ra.dev.dto.request.LoginRequest;
 import ra.dev.dto.request.SignupRequest;
-import ra.dev.dto.respone.JwtResponse;
 import ra.dev.security.CustomUserDetails;
 
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,8 +70,8 @@ public class UserServiceImp implements UserService {
             }
             Map<String, Object> listUserResponse = new HashMap<>();
             listUserResponse.put("listUser", list);
-            listUserResponse.put("totalItems",listUser.getTotalElements());
-            listUserResponse.put("totalPage",listUser.getTotalPages());
+            listUserResponse.put("totalItems", listUser.getTotalElements());
+            listUserResponse.put("totalPage", listUser.getTotalPages());
             return listUserResponse;
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,8 +103,8 @@ public class UserServiceImp implements UserService {
         }
         Map<String, Object> listUserResponse = new HashMap<>();
         listUserResponse.put("listUser", list);
-        listUserResponse.put("totalItems",listUser.getTotalElements());
-        listUserResponse.put("totalPage",listUser.getTotalPages());
+        listUserResponse.put("totalItems", listUser.getTotalElements());
+        listUserResponse.put("totalPage", listUser.getTotalPages());
         return listUserResponse;
     }
 
@@ -117,6 +116,7 @@ public class UserServiceImp implements UserService {
             userResponse.setUserID(user.getUserID());
             userResponse.setUserName(user.getUserName());
             userResponse.setEmail(user.getEmail());
+            userResponse.setCreated(user.getCreated());
             userResponse.setFullName(user.getFullName());
             userResponse.setPhoneNumber(user.getPhoneNumber());
             userResponse.setAddress(user.getAddress());
@@ -135,6 +135,7 @@ public class UserServiceImp implements UserService {
         user.setUserName(signUpRequest.getUserName());
         user.setPassword(encoder.encode(signUpRequest.getPassword()));
         user.setEmail(signUpRequest.getEmail());
+        user.setCreated(LocalDate.now());
         user.setAddress(signUpRequest.getAddress());
         user.setFullName(signUpRequest.getFullName());
         user.setPhoneNumber(signUpRequest.getPhoneNumber());
@@ -181,7 +182,7 @@ public class UserServiceImp implements UserService {
             user.setAddress(userRequest.getAddress());
             userRepository.save(user);
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -204,7 +205,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public Map<String, Object> searchByName(String userName, Pageable pageable) {
-        Page<User> listUser = userRepository.searchUserByFullNameContainingIgnoreCase(userName,pageable);
+        Page<User> listUser = userRepository.searchUserByFullNameContainingIgnoreCase(userName, pageable);
         List<GetAllUserResponse> list = new ArrayList<>();
         for (User user : listUser) {
             GetAllUserResponse userResponse = new GetAllUserResponse();
@@ -219,8 +220,8 @@ public class UserServiceImp implements UserService {
         }
         Map<String, Object> listUserResponse = new HashMap<>();
         listUserResponse.put("listUser", list);
-        listUserResponse.put("totalItems",listUser.getTotalElements());
-        listUserResponse.put("totalPage",listUser.getTotalPages());
+        listUserResponse.put("totalItems", listUser.getTotalElements());
+        listUserResponse.put("totalPage", listUser.getTotalPages());
         return listUserResponse;
     }
 
@@ -276,6 +277,37 @@ public class UserServiceImp implements UserService {
         User users = findByUserName(userName);
         users.setPassword(encoder.encode(newPass));
         return userRepository.save(users);
+    }
+
+    @Override
+    public List<NewUserByDays> newUserByDate(int days) {
+        try {
+                LocalDate end = LocalDate.now();
+                LocalDate start = end.minusDays(days);
+                List<User> listUser = userRepository.findAllByCreatedBetween(start, end);
+                return changeData(listUser);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private List<NewUserByDays> changeData(List<User> list) {
+        List<NewUserByDays> listUserResponse = new ArrayList<>();
+        for (User user : list) {
+            NewUserByDays userResponse = new NewUserByDays();
+            userResponse.setUserID(user.getUserID());
+            userResponse.setUserName(user.getUserName());
+            userResponse.setEmail(user.getEmail());
+            userResponse.setCreated(user.getCreated());
+            userResponse.setFullName(user.getFullName());
+            userResponse.setPhoneNumber(user.getPhoneNumber());
+            userResponse.setAddress(user.getAddress());
+            listUserResponse.add(userResponse);
+        }
+        List<NewUserByDays> listResponse = listUserResponse.stream()
+                .sorted(Comparator.comparing(NewUserByDays::getCreated).reversed())
+                .collect(Collectors.toList());
+        return listResponse;
     }
 
     public String generateToken(CustomUserDetails customUserDetails) {
