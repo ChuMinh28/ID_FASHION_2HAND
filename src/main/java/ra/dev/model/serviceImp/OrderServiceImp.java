@@ -14,9 +14,7 @@ import ra.dev.dto.respone.OrderDetailResponse;
 import ra.dev.dto.respone.OrderRecentResponse;
 import ra.dev.dto.respone.OrderResponse;
 
-import ra.dev.dto.respone.UserResponse;
-import ra.dev.model.entity.*;
-
+import ra.dev.dto.respone.RevenueByPromotion;
 import ra.dev.model.entity.Order;
 import ra.dev.model.entity.OrderDetail;
 import ra.dev.model.entity.User;
@@ -240,5 +238,28 @@ public class OrderServiceImp implements OrderService {
         return data;
     }
 
-
+    @Override
+    public Map<LocalDate, Object> getRevenueByDate(LocalDate start, LocalDate end) {
+        List<Order> listOrderComplete = orderRepository.findOrderByOrderDateBetweenAndOrderStatus(start,end,4);
+        Map<LocalDate, Object> mapOrder = new HashMap<>();
+        for (Order order : listOrderComplete) {
+            int totalOrder = 1;
+            int totalAmount = order.getTotalAmount();
+            RevenueByPromotion revenueByPromotion = new RevenueByPromotion();
+            revenueByPromotion.setTotalAmount(totalAmount);
+            revenueByPromotion.setCountOrder(totalOrder);
+            LocalDate key = order.getOrderDate();
+            if (mapOrder.containsKey(key)) {
+                RevenueByPromotion oldOrder = (RevenueByPromotion) mapOrder.get(key);
+                totalOrder += oldOrder.getCountOrder();
+                totalAmount += oldOrder.getTotalAmount();
+                revenueByPromotion.setTotalAmount(totalAmount);
+                revenueByPromotion.setCountOrder(totalOrder);
+                mapOrder.put(key, revenueByPromotion);
+            } else {
+                mapOrder.put(key, revenueByPromotion);
+            }
+        }
+        return mapOrder;
+    }
 }
