@@ -285,7 +285,6 @@ public class OrderServiceImp implements OrderService {
             for (Order o:orderList ) {
                 if (o.getOrderDate().equals(revenue.getDateOrder())){
                     revenue.setRevenue(revenue.getRevenue()+o.getTotalAmount());
-
                 }
             }
             addressList.add(revenue);
@@ -348,8 +347,10 @@ public class OrderServiceImp implements OrderService {
     public boolean cancelOrder(int orderID) {
         try {
             Order order = orderRepository.findById(orderID).get();
-            order.setOrderStatus(0);
-            orderRepository.save(order);
+            if (order.getOrderStatus()==2) {
+                order.setOrderStatus(0);
+                orderRepository.save(order);
+            }
             return true;
         }catch (Exception e) {
             e.printStackTrace();
