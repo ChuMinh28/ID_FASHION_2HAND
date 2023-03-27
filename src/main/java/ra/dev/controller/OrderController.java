@@ -139,4 +139,9 @@ public class OrderController {
                                                  @RequestParam(defaultValue = "3") int size) {
         return orderService.getPagging(status, searchBy, sortBy, name, direction, page, size);
     }
+
+    @GetMapping("/productWaittingPay")
+    public ResponseEntity<?> productWaittingPay(){
+        return ResponseEntity.ok("Number of products waiting for payment :"+orderService.productsWaiting());
+    }
 }

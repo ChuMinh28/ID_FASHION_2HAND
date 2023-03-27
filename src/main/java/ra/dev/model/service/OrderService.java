@@ -8,10 +8,7 @@ import ra.dev.dto.respone.OrderRecentResponse;
 import ra.dev.dto.request.OrderCreate;
 import ra.dev.dto.respone.OrderResponse;
 
-import ra.dev.dto.respone.UserResponse;
 import ra.dev.model.entity.Order;
-import ra.dev.model.entity.User;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -35,4 +32,5 @@ public interface OrderService {
     ResponseEntity<?> getRevenueByAddress(String address, LocalDate start, LocalDate end);
     List<NewUserHasOrder> newUserHasOrder(int days);
     boolean cancelOrder(int orderID);
+    int productsWaiting();
 }
