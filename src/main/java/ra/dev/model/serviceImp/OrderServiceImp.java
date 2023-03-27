@@ -18,13 +18,9 @@ import ra.dev.dto.respone.OrderResponse;
 import ra.dev.dto.respone.RevenueByPromotion;
 import ra.dev.dto.respone.*;
 
-import ra.dev.model.entity.Order;
-import ra.dev.model.entity.OrderDetail;
-import ra.dev.model.entity.User;
+import ra.dev.model.entity.*;
 
-import ra.dev.model.repository.OrderDetailRepository;
-import ra.dev.model.repository.OrderRepository;
-import ra.dev.model.repository.UserRepository;
+import ra.dev.model.repository.*;
 import ra.dev.model.service.OrderService;
 import ra.dev.security.CustomUserDetails;
 
@@ -37,6 +33,8 @@ import java.util.stream.Collectors;
 public class OrderServiceImp implements OrderService {
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private ProductDetailRepository productDetailRepository;
     @Autowired
     private OrderDetailRepository orderDetailRepository;
     @Autowired
@@ -350,6 +348,12 @@ public class OrderServiceImp implements OrderService {
             if (order.getOrderStatus()==2) {
                 order.setOrderStatus(0);
                 orderRepository.save(order);
+                List<OrderDetail> listOrderDetail = order.getListOrderDetail();
+                for (OrderDetail orderDetail:listOrderDetail) {
+                    ProductDetail productDetail = productDetailRepository.findById(orderDetail.getProduct().getProductID()).get();
+                    productDetail.setQuantity(orderDetail.getQuantity());
+                    productDetailRepository.save(productDetail);
+                }
             }
             return true;
         }catch (Exception e) {
