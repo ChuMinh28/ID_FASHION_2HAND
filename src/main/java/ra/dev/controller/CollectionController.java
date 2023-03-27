@@ -48,7 +48,6 @@ public class CollectionController {
     @GetMapping("/action")
     public Map<String, Object> paginationCollection(@RequestParam(defaultValue = "0") String search,
                                                  @RequestParam(defaultValue = "0") String sort,
-
                                                  @RequestParam("name") String name,
                                                  @RequestParam("direction") String direction,
                                                  @RequestParam(defaultValue = "0") int page,
