@@ -298,9 +298,10 @@ public class OrderServiceImp implements OrderService {
         try {
             LocalDate end = LocalDate.now();
             LocalDate start = end.minusDays(days);
-            List<User> listUser = userRepository.findAllByCreatedBetween(start, end);
+            List<User> listUser = userRepository.findAllByCreatedBetween(start,end);
             List<NewUserHasOrder> list = new ArrayList<>();
             for (User user:listUser) {
+
                 List<Order> listOrder = orderRepository.findAllByUser_UserID(user.getUserID());
                 if (!listOrder.isEmpty()) {
                     NewUserHasOrder userResponse = new NewUserHasOrder();
@@ -312,6 +313,7 @@ public class OrderServiceImp implements OrderService {
                     userResponse.setPhoneNumber(user.getPhoneNumber());
                     userResponse.setAddress(user.getAddress());
                     for (Order order:user.getListOrder()) {
+
                         if (order.getOrderStatus()!=1) {
                             OrderRecentResponse orderRecentResponse = new OrderRecentResponse();
                             orderRecentResponse.setOrderID(order.getOrderID());
@@ -329,6 +331,7 @@ public class OrderServiceImp implements OrderService {
                             orderRecentResponse.setPaymentMethod("Cash");
                             orderRecentResponse.setTotalAmount(order.getTotalAmount());
                             userResponse.getListOrder().add(orderRecentResponse);
+
                         }
                     }
                     list.add(userResponse);
@@ -344,11 +347,13 @@ public class OrderServiceImp implements OrderService {
         }
     }
 
-    public int getTotalRevenue(List<Order> orderList) {
-        int revenue = 0;
-        for (Order o : orderList) {
-            revenue += o.getTotalAmount();
-        }
-        return revenue;
-    }
+
+
+//    public int getTotalRevenue(List<Order> orderList) {
+//        int revenue = 0;
+//        for (Order o : orderList) {
+//            revenue += o.getTotalAmount();
+//        }
+//        return revenue;
+//    }
 }
