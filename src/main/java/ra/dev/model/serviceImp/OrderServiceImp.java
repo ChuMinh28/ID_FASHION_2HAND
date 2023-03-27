@@ -247,7 +247,7 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     public Map<LocalDate, Object> getRevenueByDate(LocalDate start, LocalDate end) {
-        List<Order> listOrderComplete = orderRepository.findOrderByOrderDateBetweenAndOrderStatus(start,end,4);
+        List<Order> listOrderComplete = orderRepository.findOrderByOrderDateBetweenAndOrderStatus(start, end, 4);
         Map<LocalDate, Object> mapOrder = new HashMap<>();
         for (Order order : listOrderComplete) {
             int totalOrder = 1;
@@ -275,17 +275,16 @@ public class OrderServiceImp implements OrderService {
     public ResponseEntity<?> getRevenueByAddress(String address, LocalDate start, LocalDate end) {
         List<Order> orderList = orderRepository.findByOrderStatusAndAddressEqualsAndOrderDateBetween(4, address, start, end);
         List<RevenueByAddress> addressList = new ArrayList<>();
-        long daysBetween = ChronoUnit.DAYS.between(start,end);
-        for (int i = 0; i <=daysBetween ; i++) {
-            RevenueByAddress revenue=new RevenueByAddress();
-            revenue.setId(i+1);
+        long daysBetween = ChronoUnit.DAYS.between(start, end);
+        for (int i = 0; i <= daysBetween; i++) {
+            RevenueByAddress revenue = new RevenueByAddress();
+            revenue.setId(i + 1);
             revenue.setDateOrder(start.plusDays(i));
             revenue.setAddress(address);
             revenue.setRevenue(0);
-            for (Order o:orderList ) {
-                if (o.getOrderDate().equals(revenue.getDateOrder())){
-                    revenue.setRevenue(revenue.getRevenue()+o.getTotalAmount());
-
+            for (Order o : orderList) {
+                if (o.getOrderDate().equals(revenue.getDateOrder())) {
+                    revenue.setRevenue(revenue.getRevenue() + o.getTotalAmount());
                 }
             }
             addressList.add(revenue);
@@ -298,10 +297,9 @@ public class OrderServiceImp implements OrderService {
         try {
             LocalDate end = LocalDate.now();
             LocalDate start = end.minusDays(days);
-            List<User> listUser = userRepository.findAllByCreatedBetween(start,end);
+            List<User> listUser = userRepository.findAllByCreatedBetween(start, end);
             List<NewUserHasOrder> list = new ArrayList<>();
-            for (User user:listUser) {
-
+            for (User user : listUser) {
                 List<Order> listOrder = orderRepository.findAllByUser_UserID(user.getUserID());
                 if (!listOrder.isEmpty()) {
                     NewUserHasOrder userResponse = new NewUserHasOrder();
@@ -312,8 +310,8 @@ public class OrderServiceImp implements OrderService {
                     userResponse.setFullName(user.getFullName());
                     userResponse.setPhoneNumber(user.getPhoneNumber());
                     userResponse.setAddress(user.getAddress());
-                    for (Order order:user.getListOrder()) {
-                        if (order.getOrderStatus()!=1) {
+                    for (Order order : user.getListOrder()) {
+                        if (order.getOrderStatus() != 1) {
                             OrderRecentResponse orderRecentResponse = new OrderRecentResponse();
                             orderRecentResponse.setOrderID(order.getOrderID());
                             orderRecentResponse.setCreated(order.getOrderDate());
@@ -340,7 +338,7 @@ public class OrderServiceImp implements OrderService {
                     .sorted(Comparator.comparing(NewUserHasOrder::getCreated).reversed())
                     .collect(Collectors.toList());
             return listResponse;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -348,14 +346,12 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     public int productsWaiting() {
-        List<Order> productsWaiting=orderRepository.findOrderByOrderStatus(3);
-        int quantity=0;
-        for (Order o:productsWaiting  ) {
-           List<OrderDetail> od=orderDetailRepository.findAllByOrder_OrderID(o.getOrderID());
-            for (OrderDetail ods:od  ) {
-                quantity+=ods.getQuantity();
+        List<Order> productsWaiting = orderRepository.findOrderByOrderStatus(3);
+        int quantity = 0;
+            List<OrderDetail> od = orderDetailRepository.findByOrderIn(productsWaiting);
+            for (OrderDetail ods : od) {
+                quantity += ods.getQuantity();
             }
-        }
         return quantity;
     }
 }
