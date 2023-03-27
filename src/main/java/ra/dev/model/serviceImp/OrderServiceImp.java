@@ -344,13 +344,16 @@ public class OrderServiceImp implements OrderService {
         }
     }
 
-
-
-//    public int getTotalRevenue(List<Order> orderList) {
-//        int revenue = 0;
-//        for (Order o : orderList) {
-//            revenue += o.getTotalAmount();
-//        }
-//        return revenue;
-//    }
+    @Override
+    public int productsWaiting() {
+        List<Order> productsWaiting=orderRepository.findOrderByOrderStatus(3);
+        int quantity=0;
+        for (Order o:productsWaiting  ) {
+           List<OrderDetail> od=orderDetailRepository.findAllByOrder_OrderID(o.getOrderID());
+            for (OrderDetail ods:od  ) {
+                quantity+=ods.getQuantity();
+            }
+        }
+        return quantity;
+    }
 }
