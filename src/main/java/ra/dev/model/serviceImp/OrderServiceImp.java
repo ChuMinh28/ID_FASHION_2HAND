@@ -312,7 +312,7 @@ public class OrderServiceImp implements OrderService {
                     userResponse.setPhoneNumber(user.getPhoneNumber());
                     userResponse.setAddress(user.getAddress());
                     for (Order order:user.getListOrder()) {
-                        if (order.getOrderStatus()!=1) {
+                        if (order.getOrderStatus()!=1 && order.getOrderStatus()!=0) {
                             OrderRecentResponse orderRecentResponse = new OrderRecentResponse();
                             orderRecentResponse.setOrderID(order.getOrderID());
                             orderRecentResponse.setCreated(order.getOrderDate());
@@ -341,6 +341,19 @@ public class OrderServiceImp implements OrderService {
         }catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    @Override
+    public boolean cancelOrder(int orderID) {
+        try {
+            Order order = orderRepository.findById(orderID).get();
+            order.setOrderStatus(0);
+            orderRepository.save(order);
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
