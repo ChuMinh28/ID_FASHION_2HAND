@@ -313,7 +313,6 @@ public class OrderServiceImp implements OrderService {
                     userResponse.setPhoneNumber(user.getPhoneNumber());
                     userResponse.setAddress(user.getAddress());
                     for (Order order:user.getListOrder()) {
-
                         if (order.getOrderStatus()!=1) {
                             OrderRecentResponse orderRecentResponse = new OrderRecentResponse();
                             orderRecentResponse.setOrderID(order.getOrderID());
@@ -359,12 +358,4 @@ public class OrderServiceImp implements OrderService {
         }
         return quantity;
     }
-
-//    public int getTotalRevenue(List<Order> orderList) {
-//        int revenue = 0;
-//        for (Order o : orderList) {
-//            revenue += o.getTotalAmount();
-//        }
-//        return revenue;
-//    }
 }
