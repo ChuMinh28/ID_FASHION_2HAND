@@ -371,4 +371,15 @@ public class OrderServiceImp implements OrderService {
             }
         return quantity;
     }
+
+    @Override
+    public List<CancelOrder> cancelProduct() {
+        List<Order> productsWaiting = orderRepository.findOrderByOrderStatus(0);
+        List<CancelOrder> cancelOrderList=new ArrayList<>();
+        for (Order o:productsWaiting) {
+            CancelOrder c=new CancelOrder(o.getOrderID(),o.getUser().getFullName());
+            cancelOrderList.add(c);
+        }
+        return cancelOrderList;
+    }
 }

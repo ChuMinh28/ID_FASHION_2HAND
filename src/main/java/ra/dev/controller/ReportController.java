@@ -5,10 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ra.dev.dto.respone.NewUserByDays;
 import ra.dev.dto.respone.NewUserHasOrder;
-import ra.dev.dto.respone.UserResponse;
 import ra.dev.model.service.OrderService;
 import ra.dev.model.service.UserService;
-
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -67,4 +65,13 @@ public class ReportController {
         LocalDate endDate = LocalDate.parse(end);
         return orderService.getRevenueByAddress(address, startDate, endDate);
     }
+    @GetMapping("/productWaittingPay")
+    public ResponseEntity<?> productWaittingPay(){
+        return ResponseEntity.ok("Number of products waiting for payment :"+orderService.productsWaiting());
+    }
+    @GetMapping("/productCancel")
+    public ResponseEntity<?> productCancel(){
+        return ResponseEntity.ok(orderService.cancelProduct());
+    }
+
 }
