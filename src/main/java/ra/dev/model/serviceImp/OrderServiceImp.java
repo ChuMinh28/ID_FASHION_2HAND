@@ -312,22 +312,24 @@ public class OrderServiceImp implements OrderService {
                     userResponse.setPhoneNumber(user.getPhoneNumber());
                     userResponse.setAddress(user.getAddress());
                     for (Order order:user.getListOrder()) {
-                        OrderRecentResponse orderRecentResponse = new OrderRecentResponse();
-                        orderRecentResponse.setOrderID(order.getOrderID());
-                        orderRecentResponse.setCreated(order.getOrderDate());
-                        if (order.getOrderStatus() == 2) {
-                            orderRecentResponse.setOrderStatus("Pending");
+                        if (order.getOrderStatus()!=1) {
+                            OrderRecentResponse orderRecentResponse = new OrderRecentResponse();
+                            orderRecentResponse.setOrderID(order.getOrderID());
+                            orderRecentResponse.setCreated(order.getOrderDate());
+                            if (order.getOrderStatus() == 2) {
+                                orderRecentResponse.setOrderStatus("Pending");
+                            }
+                            if (order.getOrderStatus() == 3) {
+                                orderRecentResponse.setOrderStatus("Confirmed");
+                            }
+                            if (order.getOrderStatus() == 4) {
+                                orderRecentResponse.setOrderStatus("Complete");
+                            }
+                            orderRecentResponse.setOrderID(order.getOrderID());
+                            orderRecentResponse.setPaymentMethod("Cash");
+                            orderRecentResponse.setTotalAmount(order.getTotalAmount());
+                            userResponse.getListOrder().add(orderRecentResponse);
                         }
-                        if (order.getOrderStatus() == 3) {
-                            orderRecentResponse.setOrderStatus("Confirmed");
-                        }
-                        if (order.getOrderStatus() == 4) {
-                            orderRecentResponse.setOrderStatus("Complete");
-                        }
-                        orderRecentResponse.setOrderID(order.getOrderID());
-                        orderRecentResponse.setPaymentMethod("Cash");
-                        orderRecentResponse.setTotalAmount(order.getTotalAmount());
-                        userResponse.getListOrder().add(orderRecentResponse);
                     }
                     list.add(userResponse);
                 }
