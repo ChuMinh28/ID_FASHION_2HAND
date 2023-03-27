@@ -285,7 +285,6 @@ public class OrderServiceImp implements OrderService {
             for (Order o:orderList ) {
                 if (o.getOrderDate().equals(revenue.getDateOrder())){
                     revenue.setRevenue(revenue.getRevenue()+o.getTotalAmount());
-
                 }
             }
             addressList.add(revenue);
@@ -301,7 +300,6 @@ public class OrderServiceImp implements OrderService {
             List<User> listUser = userRepository.findAllByCreatedBetween(start,end);
             List<NewUserHasOrder> list = new ArrayList<>();
             for (User user:listUser) {
-
                 List<Order> listOrder = orderRepository.findAllByUser_UserID(user.getUserID());
                 if (!listOrder.isEmpty()) {
                     NewUserHasOrder userResponse = new NewUserHasOrder();
@@ -313,7 +311,7 @@ public class OrderServiceImp implements OrderService {
                     userResponse.setPhoneNumber(user.getPhoneNumber());
                     userResponse.setAddress(user.getAddress());
                     for (Order order:user.getListOrder()) {
-                        if (order.getOrderStatus()!=1) {
+                        if (order.getOrderStatus()!=1 && order.getOrderStatus()!=0) {
                             OrderRecentResponse orderRecentResponse = new OrderRecentResponse();
                             orderRecentResponse.setOrderID(order.getOrderID());
                             orderRecentResponse.setCreated(order.getOrderDate());
@@ -330,7 +328,6 @@ public class OrderServiceImp implements OrderService {
                             orderRecentResponse.setPaymentMethod("Cash");
                             orderRecentResponse.setTotalAmount(order.getTotalAmount());
                             userResponse.getListOrder().add(orderRecentResponse);
-
                         }
                     }
                     list.add(userResponse);
@@ -347,6 +344,20 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
+    public boolean cancelOrder(int orderID) {
+        try {
+            Order order = orderRepository.findById(orderID).get();
+            if (order.getOrderStatus()==2) {
+                order.setOrderStatus(0);
+                orderRepository.save(order);
+            }
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public int productsWaiting() {
         List<Order> productsWaiting=orderRepository.findOrderByOrderStatus(3);
         int quantity=0;
