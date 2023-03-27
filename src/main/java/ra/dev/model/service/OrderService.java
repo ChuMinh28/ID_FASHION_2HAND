@@ -35,5 +35,5 @@ public interface OrderService {
     ResponseEntity<?> getRevenueByAddress(String address, LocalDate start, LocalDate end);
     List<NewUserHasOrder> newUserHasOrder(int days);
 
-
+    int productsWaiting();
 }
