@@ -131,9 +131,8 @@ public class OrderController {
     }
 
 
-    @GetMapping("/productWaittingPay")
-    public ResponseEntity<?> productWaittingPay(){
-        return ResponseEntity.ok("Number of products waiting for payment :"+orderService.productsWaiting());
-    }
+
+
+
 
 }

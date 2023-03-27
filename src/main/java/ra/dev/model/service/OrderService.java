@@ -3,14 +3,10 @@ package ra.dev.model.service;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import ra.dev.dto.respone.NewUserHasOrder;
-import ra.dev.dto.respone.OrderRecentResponse;
+import ra.dev.dto.respone.*;
 import ra.dev.dto.request.OrderCreate;
-import ra.dev.dto.respone.OrderResponse;
 
-import ra.dev.dto.respone.UserResponse;
 import ra.dev.model.entity.Order;
-import ra.dev.model.entity.User;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,4 +32,6 @@ public interface OrderService {
     List<NewUserHasOrder> newUserHasOrder(int days);
 
     int productsWaiting();
+
+    List<CancelOrder> cancelProduct();
 }
