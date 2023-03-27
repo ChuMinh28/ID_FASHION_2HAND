@@ -18,13 +18,9 @@ import ra.dev.dto.respone.OrderResponse;
 import ra.dev.dto.respone.RevenueByPromotion;
 import ra.dev.dto.respone.*;
 
-import ra.dev.model.entity.Order;
-import ra.dev.model.entity.OrderDetail;
-import ra.dev.model.entity.User;
+import ra.dev.model.entity.*;
 
-import ra.dev.model.repository.OrderDetailRepository;
-import ra.dev.model.repository.OrderRepository;
-import ra.dev.model.repository.UserRepository;
+import ra.dev.model.repository.*;
 import ra.dev.model.service.OrderService;
 import ra.dev.security.CustomUserDetails;
 
@@ -37,6 +33,8 @@ import java.util.stream.Collectors;
 public class OrderServiceImp implements OrderService {
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private ProductDetailRepository productDetailRepository;
     @Autowired
     private OrderDetailRepository orderDetailRepository;
     @Autowired
@@ -254,14 +252,14 @@ public class OrderServiceImp implements OrderService {
             int totalAmount = order.getTotalAmount();
             RevenueByPromotion revenueByPromotion = new RevenueByPromotion();
             revenueByPromotion.setTotalAmount(totalAmount);
-            revenueByPromotion.setCountOrder(totalOrder);
+            revenueByPromotion.setTotalOrder(totalOrder);
             LocalDate key = order.getOrderDate();
             if (mapOrder.containsKey(key)) {
                 RevenueByPromotion oldOrder = (RevenueByPromotion) mapOrder.get(key);
-                totalOrder += oldOrder.getCountOrder();
+                totalOrder += oldOrder.getTotalOrder();
                 totalAmount += oldOrder.getTotalAmount();
                 revenueByPromotion.setTotalAmount(totalAmount);
-                revenueByPromotion.setCountOrder(totalOrder);
+                revenueByPromotion.setTotalOrder(totalOrder);
                 mapOrder.put(key, revenueByPromotion);
             } else {
                 mapOrder.put(key, revenueByPromotion);
@@ -282,9 +280,9 @@ public class OrderServiceImp implements OrderService {
             revenue.setDateOrder(start.plusDays(i));
             revenue.setAddress(address);
             revenue.setRevenue(0);
-            for (Order o : orderList) {
-                if (o.getOrderDate().equals(revenue.getDateOrder())) {
-                    revenue.setRevenue(revenue.getRevenue() + o.getTotalAmount());
+            for (Order o:orderList ) {
+                if (o.getOrderDate().equals(revenue.getDateOrder())){
+                    revenue.setRevenue(revenue.getRevenue()+o.getTotalAmount());
                 }
             }
             addressList.add(revenue);
@@ -299,7 +297,7 @@ public class OrderServiceImp implements OrderService {
             LocalDate start = end.minusDays(days);
             List<User> listUser = userRepository.findAllByCreatedBetween(start, end);
             List<NewUserHasOrder> list = new ArrayList<>();
-            for (User user : listUser) {
+            for (User user:listUser) {
                 List<Order> listOrder = orderRepository.findAllByUser_UserID(user.getUserID());
                 if (!listOrder.isEmpty()) {
                     NewUserHasOrder userResponse = new NewUserHasOrder();
@@ -310,8 +308,8 @@ public class OrderServiceImp implements OrderService {
                     userResponse.setFullName(user.getFullName());
                     userResponse.setPhoneNumber(user.getPhoneNumber());
                     userResponse.setAddress(user.getAddress());
-                    for (Order order : user.getListOrder()) {
-                        if (order.getOrderStatus() != 1) {
+                    for (Order order:user.getListOrder()) {
+                        if (order.getOrderStatus()!=1 && order.getOrderStatus()!=0) {
                             OrderRecentResponse orderRecentResponse = new OrderRecentResponse();
                             orderRecentResponse.setOrderID(order.getOrderID());
                             orderRecentResponse.setCreated(order.getOrderDate());
@@ -328,7 +326,6 @@ public class OrderServiceImp implements OrderService {
                             orderRecentResponse.setPaymentMethod("Cash");
                             orderRecentResponse.setTotalAmount(order.getTotalAmount());
                             userResponse.getListOrder().add(orderRecentResponse);
-
                         }
                     }
                     list.add(userResponse);
@@ -345,6 +342,26 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
+    public boolean cancelOrder(int orderID) {
+        try {
+            Order order = orderRepository.findById(orderID).get();
+            if (order.getOrderStatus()==2) {
+                order.setOrderStatus(0);
+                orderRepository.save(order);
+                List<OrderDetail> listOrderDetail = order.getListOrderDetail();
+                for (OrderDetail orderDetail:listOrderDetail) {
+                    ProductDetail productDetail = productDetailRepository.findById(orderDetail.getProduct().getProductID()).get();
+                    productDetail.setQuantity(orderDetail.getQuantity());
+                    productDetailRepository.save(productDetail);
+                }
+            }
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public int productsWaiting() {
         List<Order> productsWaiting = orderRepository.findOrderByOrderStatus(3);
         int quantity = 0;
