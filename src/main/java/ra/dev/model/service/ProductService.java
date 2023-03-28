@@ -4,6 +4,8 @@ import ra.dev.dto.request.ProductByCat;
 import ra.dev.dto.respone.*;
 import ra.dev.model.entity.Product;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -24,5 +26,6 @@ public interface ProductService {
     Map<String,Object> getPagging(int id, int number,String searchBy,String sortBy,String name,String direction,int page, int size);
     Set<GetProductByCat> findProductByCatalog(ProductByCat productByCat);
     List<RevenueLisst> getListRevenue(LocalDate start, LocalDate end);
+    void exportFile(HttpServletResponse response) throws IOException;
 
 }

@@ -1,5 +1,9 @@
 package ra.dev.model.serviceImp;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +16,9 @@ import ra.dev.model.entity.*;
 import ra.dev.model.repository.*;
 import ra.dev.model.service.ProductService;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -461,6 +468,7 @@ public class ProductServiceImp implements ProductService {
     @Override
     public List<GetProduct> listSale() {
         List<Product> productList = employeeDAO.findAllEmployees();
+
         List<GetProduct> listShow = new ArrayList<>();
         for (Product product : productList) {
             GetProduct getProduct = new GetProduct(
@@ -500,10 +508,9 @@ public class ProductServiceImp implements ProductService {
                         break;
                     } else {
                         check = false;
-                        Product product = productRepository.findById(orderDetail.getProduct().getProductID()).get();
                         revenueReserve.setDate(order.getOrderDate());
                         revenueReserve.setProductID(orderDetail.getProduct().getProductID());
-                        revenueReserve.setProductName(product.getProductName());
+                        revenueReserve.setProductName(productRepository.findById(orderDetail.getProduct().getProductID()).get().getProductName());
                         revenueReserve.setTotalAmout(orderDetail.getTotalAmount());
                     }
                 }
@@ -534,9 +541,32 @@ public class ProductServiceImp implements ProductService {
             revenueLisst.setRevenueList(revenueList);
             revenueLissts.add(revenueLisst);
         }
-
-
         return revenueLissts;
+    }
+
+    @Override
+    public void exportFile(HttpServletResponse response) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Danh sach san pham");
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("Ma san pham");
+        headerRow.createCell(1).setCellValue("Ten san pham");
+        headerRow.createCell(2).setCellValue("Gia san pham");
+        headerRow.createCell(3).setCellValue("So tien giam gia");
+        List<Product> productList = productRepository.findAll();
+        int rowNum = 1;
+        for (Product product : productList) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(product.getProductID());
+            row.createCell(1).setCellValue(product.getProductName());
+            row.createCell(2).setCellValue(product.getPrice());
+            row.createCell(3).setCellValue(product.getDiscount());
+        }
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=\"ProdutcList.xlsx\"");
+        OutputStream outputStream = response.getOutputStream();
+        workbook.write(outputStream);
+        outputStream.close();
     }
 
 
