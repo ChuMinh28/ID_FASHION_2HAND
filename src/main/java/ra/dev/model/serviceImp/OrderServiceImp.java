@@ -280,9 +280,9 @@ public class OrderServiceImp implements OrderService {
             revenue.setDateOrder(start.plusDays(i));
             revenue.setAddress(address);
             revenue.setRevenue(0);
-            for (Order o:orderList ) {
-                if (o.getOrderDate().equals(revenue.getDateOrder())){
-                    revenue.setRevenue(revenue.getRevenue()+o.getTotalAmount());
+            for (Order o : orderList) {
+                if (o.getOrderDate().equals(revenue.getDateOrder())) {
+                    revenue.setRevenue(revenue.getRevenue() + o.getTotalAmount());
                 }
             }
             addressList.add(revenue);
@@ -297,7 +297,7 @@ public class OrderServiceImp implements OrderService {
             LocalDate start = end.minusDays(days);
             List<User> listUser = userRepository.findAllByCreatedBetween(start, end);
             List<NewUserHasOrder> list = new ArrayList<>();
-            for (User user:listUser) {
+            for (User user : listUser) {
                 List<Order> listOrder = orderRepository.findAllByUser_UserID(user.getUserID());
                 if (!listOrder.isEmpty()) {
                     NewUserHasOrder userResponse = new NewUserHasOrder();
@@ -308,8 +308,8 @@ public class OrderServiceImp implements OrderService {
                     userResponse.setFullName(user.getFullName());
                     userResponse.setPhoneNumber(user.getPhoneNumber());
                     userResponse.setAddress(user.getAddress());
-                    for (Order order:user.getListOrder()) {
-                        if (order.getOrderStatus()!=1 && order.getOrderStatus()!=0) {
+                    for (Order order : user.getListOrder()) {
+                        if (order.getOrderStatus() != 1 && order.getOrderStatus() != 0) {
                             OrderRecentResponse orderRecentResponse = new OrderRecentResponse();
                             orderRecentResponse.setOrderID(order.getOrderID());
                             orderRecentResponse.setCreated(order.getOrderDate());
@@ -345,18 +345,18 @@ public class OrderServiceImp implements OrderService {
     public boolean cancelOrder(int orderID) {
         try {
             Order order = orderRepository.findById(orderID).get();
-            if (order.getOrderStatus()==2) {
+            if (order.getOrderStatus() == 2) {
                 order.setOrderStatus(0);
                 orderRepository.save(order);
                 List<OrderDetail> listOrderDetail = order.getListOrderDetail();
-                for (OrderDetail orderDetail:listOrderDetail) {
+                for (OrderDetail orderDetail : listOrderDetail) {
                     ProductDetail productDetail = productDetailRepository.findById(orderDetail.getProduct().getProductID()).get();
                     productDetail.setQuantity(orderDetail.getQuantity());
                     productDetailRepository.save(productDetail);
                 }
             }
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -365,19 +365,24 @@ public class OrderServiceImp implements OrderService {
     public int productsWaiting() {
         List<Order> productsWaiting = orderRepository.findOrderByOrderStatus(3);
         int quantity = 0;
-            List<OrderDetail> od = orderDetailRepository.findByOrderIn(productsWaiting);
-            for (OrderDetail ods : od) {
-                quantity += ods.getQuantity();
-            }
+        List<OrderDetail> od = orderDetailRepository.findByOrderIn(productsWaiting);
+        for (OrderDetail ods : od) {
+            quantity += ods.getQuantity();
+        }
         return quantity;
     }
 
     @Override
     public List<CancelOrder> cancelProduct() {
-        List<Order> productsWaiting = orderRepository.findOrderByOrderStatus(0);
-        List<CancelOrder> cancelOrderList=new ArrayList<>();
-        for (Order o:productsWaiting) {
-            CancelOrder c=new CancelOrder(o.getOrderID(),o.getUser().getFullName());
+        List<Order> productsCancel = orderRepository.findOrderByOrderStatus(0);
+        List<CancelOrder> cancelOrderList = new ArrayList<>();
+        for (Order o : productsCancel) {
+            int quantity = 0;
+            for (OrderDetail ods : o.getListOrderDetail()) {
+                quantity += ods.getQuantity();
+            }
+            CancelOrder c = new CancelOrder(o.getOrderID(), o.getUser().getFullName()
+                                            , quantity, o.getTotalAmount());
             cancelOrderList.add(c);
         }
         return cancelOrderList;

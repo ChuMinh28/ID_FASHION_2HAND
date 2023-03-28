@@ -55,8 +55,6 @@ public class ReportController {
         LocalDate end = LocalDate.parse(endDate);
         return ResponseEntity.ok(orderService.getRevenueByDate(start, end));
     }
-
-
     @GetMapping("/revenuebyAddress")
     public ResponseEntity<?> revenueByAddresses(@RequestParam String address,
                                                 @RequestParam String start,
@@ -73,5 +71,4 @@ public class ReportController {
     public ResponseEntity<?> productCancel(){
         return ResponseEntity.ok(orderService.cancelProduct());
     }
-
 }
