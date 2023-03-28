@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -29,6 +31,6 @@ public class ProductDetail {
     @ManyToOne
     @JoinColumn(name = "ColorID")
     private Color color;
-
-
+    @OneToMany(mappedBy = "productDetail")
+    List<HistoryUpdateProduct> listHistoryUpdate = new ArrayList<>();
 }

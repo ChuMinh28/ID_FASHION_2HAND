@@ -1,6 +1,7 @@
 package ra.dev.model.service;
 
 import ra.dev.dto.request.CreateProductDetail;
+import ra.dev.dto.respone.HistoryResponse;
 import ra.dev.model.entity.Color;
 import ra.dev.model.entity.ProductDetail;
 import ra.dev.model.entity.Size;
@@ -12,9 +13,9 @@ public interface ProductDetailService {
     List<Size> getListSize(int colorID,int productID);
     List<Color> getListColor(int sizeID,int productID);
     ProductDetail getDetail(int sizeID, int ColorID, int productID);
-
     ProductDetail createProductDetail(CreateProductDetail createProductDetail);
     ProductDetail updateProductDetail(int productDetailID,CreateProductDetail createProductDetail);
     Map<String,Object> getPagging(int page, int size,String direction,String sortBy);
-
+    boolean updateQuantity(int productDetailID, int quantity, String action);
+    List<HistoryResponse> getHistory(int productID);
 }

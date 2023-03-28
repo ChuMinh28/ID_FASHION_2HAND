@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +27,8 @@ public class User {
     private String userName;
     @Column(name = "Password")
     private String password;
+    @Column(name = "Created")
+    private LocalDate created;
     @Column(name = "FullName")
     private String fullName;
     @Column(name = "PhoneNumber")
@@ -39,6 +42,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<Order> listOrder = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "Wishlist",joinColumns = @JoinColumn(name = "UserID"),
+            inverseJoinColumns = @JoinColumn(name = "productID"))
+    private Set<Product> wishList = new HashSet<>();
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "User_Role", joinColumns = @JoinColumn(name = "userID"), inverseJoinColumns = @JoinColumn(name = "roleId"))
     private Set<Roles> listRoles = new HashSet<>();

@@ -7,16 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ra.dev.dto.request.CreateProductDetail;
-import ra.dev.model.entity.Color;
-import ra.dev.model.entity.Product;
-import ra.dev.model.entity.ProductDetail;
-import ra.dev.model.entity.Size;
-import ra.dev.model.repository.ColorRepository;
-import ra.dev.model.repository.ProductDetailRepository;
-import ra.dev.model.repository.ProductRepository;
-import ra.dev.model.repository.SizeRepository;
+import ra.dev.dto.respone.HistoryResponse;
+import ra.dev.model.entity.*;
+import ra.dev.model.repository.*;
 import ra.dev.model.service.ProductDetailService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +29,8 @@ public class ProductDetailServiceImp implements ProductDetailService {
     SizeRepository sizeRepository;
     @Autowired
     ProductRepository productRepository;
+    @Autowired
+    HistoryRepository historyRepository;
 
     @Override
     public List<Size> getListSize(int colorID, int productID) {
@@ -80,6 +78,12 @@ public class ProductDetailServiceImp implements ProductDetailService {
         productDetail.setSize(size);
         productDetail.setColor(color);
         productDetail.setQuantity(createProductDetail.getQuantity());
+        HistoryUpdateProduct historyUpdateProduct = new HistoryUpdateProduct();
+        historyUpdateProduct.setDayUpdate(LocalDate.now());
+        historyUpdateProduct.setQuantity(createProductDetail.getQuantity());
+        historyUpdateProduct.setProductDetail(productDetail);
+        historyUpdateProduct.setAction("Order");
+        historyRepository.save(historyUpdateProduct);
         return productDetailRepository.save(productDetail);
     }
 
@@ -111,5 +115,53 @@ public class ProductDetailServiceImp implements ProductDetailService {
         return data;
     }
 
+    @Override
+    public boolean updateQuantity(int productDetailID, int quantity, String action) {
+        try {
+            ProductDetail productDetail = productDetailRepository.findById(productDetailID).get();
+            if (action.equals("add")) {
+                productDetail.setQuantity(productDetail.getQuantity()+quantity);
+                productDetailRepository.save(productDetail);
+                HistoryUpdateProduct historyUpdateProduct = new HistoryUpdateProduct();
+                historyUpdateProduct.setDayUpdate(LocalDate.now());
+                historyUpdateProduct.setQuantity(quantity);
+                historyUpdateProduct.setProductDetail(productDetail);
+                historyUpdateProduct.setAction("Add Quantity");
+                historyRepository.save(historyUpdateProduct);
+            } else {
+                productDetail.setQuantity(quantity);
+                productDetailRepository.save(productDetail);
+                HistoryUpdateProduct historyUpdateProduct = new HistoryUpdateProduct();
+                historyUpdateProduct.setDayUpdate(LocalDate.now());
+                historyUpdateProduct.setQuantity(quantity);
+                historyUpdateProduct.setProductDetail(productDetail);
+                historyUpdateProduct.setAction("Order");
+                historyRepository.save(historyUpdateProduct);
+            }
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
+    @Override
+    public List<HistoryResponse> getHistory(int productID) {
+        try {
+            List<HistoryUpdateProduct> list = historyRepository.findAllByProductDetail_ProductDetailID(productID);
+            List<HistoryResponse> listResponse = new ArrayList<>();
+            for (HistoryUpdateProduct pro:list) {
+                HistoryResponse historyResponse = new HistoryResponse();
+                historyResponse.setProductName(pro.getProductDetail().getProduct().getProductName());
+                historyResponse.setDayUpdate(pro.getDayUpdate());
+                historyResponse.setAction(pro.getAction());
+                historyResponse.setQuantity(pro.getQuantity());
+                listResponse.add(historyResponse);
+            }
+            return listResponse;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

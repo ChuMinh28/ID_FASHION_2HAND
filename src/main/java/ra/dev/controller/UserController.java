@@ -6,9 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import ra.dev.dto.request.UpdateUserRequest;
 import ra.dev.dto.respone.UserResponse;
+import ra.dev.dto.respone.WishListResponse;
 import ra.dev.model.entity.User;
 import ra.dev.model.service.UserService;
 
@@ -16,6 +18,7 @@ import ra.dev.dto.request.LoginRequest;
 import ra.dev.dto.request.SignupRequest;
 import ra.dev.validation.Validate;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -154,5 +157,35 @@ public class UserController {
         }
         Map<String, Object> list = userService.searchByName(fullName, pageable);
         return ResponseEntity.ok(list);
+    }
+
+    @PatchMapping("addToWishList/{productID}")
+    public ResponseEntity<?> addToWishList(@PathVariable("productID") int productID) {
+        boolean check = userService.addToWishList(productID);
+        if (check) {
+            return ResponseEntity.ok("Add product to wishlist successfully!");
+        } else {
+            return ResponseEntity.badRequest().body("Error!!!");
+        }
+    }
+
+    @PatchMapping("removeFromWishList/{productID}")
+    public ResponseEntity<?> removeFromWishList(@PathVariable("productID") int productID) {
+        boolean check = userService.removeFromWishList(productID);
+        if (check) {
+            return ResponseEntity.ok("Remove product from wishlist successfully!");
+        } else {
+            return ResponseEntity.badRequest().body("Error!!!");
+        }
+    }
+
+    @GetMapping("getUserWishList")
+    public ResponseEntity<?> getUserWishList() {
+        List<WishListResponse> list = userService.getUserWishList();
+        if (!list.isEmpty()) {
+            return ResponseEntity.ok(list);
+        } else {
+            return ResponseEntity.ok("There isn't any product in your wishlist!");
+        }
     }
 }

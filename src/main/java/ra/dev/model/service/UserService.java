@@ -1,15 +1,18 @@
 package ra.dev.model.service;
 
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ra.dev.dto.request.UpdateUserRequest;
+import ra.dev.dto.respone.NewUserByDays;
 import ra.dev.dto.respone.UserResponse;
+import ra.dev.dto.respone.WishListResponse;
+
 import ra.dev.model.entity.User;
 import ra.dev.dto.request.LoginRequest;
 import ra.dev.dto.request.SignupRequest;
 import ra.dev.dto.respone.JwtResponse;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserService {
@@ -27,5 +30,9 @@ public interface UserService {
     JwtResponse login(LoginRequest loginRequest);
     boolean getToken(String email);
     User resetPass(String token, String newPass);
-
+    List<NewUserByDays> newUserByDate(int days);
+    boolean addToWishList(int productID);
+    boolean removeFromWishList(int productID);
+    List<WishListResponse> getUserWishList();
+    Map<String, Integer> favoriteProduct();
 }

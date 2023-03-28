@@ -18,20 +18,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ra.dev.dto.request.UpdateUserRequest;
-import ra.dev.dto.respone.GetAllUserResponse;
-import ra.dev.dto.respone.UserResponse;
+import ra.dev.dto.respone.*;
 import ra.dev.model.entity.ERole;
+import ra.dev.model.entity.Product;
 import ra.dev.model.entity.Roles;
 import ra.dev.model.entity.User;
+import ra.dev.model.repository.ProductRepository;
 import ra.dev.model.repository.RoleRepository;
 import ra.dev.model.repository.UserRepository;
 import ra.dev.model.service.UserService;
 import ra.dev.dto.request.LoginRequest;
 import ra.dev.dto.request.SignupRequest;
-import ra.dev.dto.respone.JwtResponse;
 import ra.dev.security.CustomUserDetails;
 
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,8 @@ public class UserServiceImp implements UserService {
     private PasswordEncoder encoder;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Value("${ra.jwt.secret}")
     private String JWT_SECRET;
@@ -71,8 +74,8 @@ public class UserServiceImp implements UserService {
             }
             Map<String, Object> listUserResponse = new HashMap<>();
             listUserResponse.put("listUser", list);
-            listUserResponse.put("totalItems",listUser.getTotalElements());
-            listUserResponse.put("totalPage",listUser.getTotalPages());
+            listUserResponse.put("totalItems", listUser.getTotalElements());
+            listUserResponse.put("totalPage", listUser.getTotalPages());
             return listUserResponse;
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,8 +107,8 @@ public class UserServiceImp implements UserService {
         }
         Map<String, Object> listUserResponse = new HashMap<>();
         listUserResponse.put("listUser", list);
-        listUserResponse.put("totalItems",listUser.getTotalElements());
-        listUserResponse.put("totalPage",listUser.getTotalPages());
+        listUserResponse.put("totalItems", listUser.getTotalElements());
+        listUserResponse.put("totalPage", listUser.getTotalPages());
         return listUserResponse;
     }
 
@@ -117,6 +120,7 @@ public class UserServiceImp implements UserService {
             userResponse.setUserID(user.getUserID());
             userResponse.setUserName(user.getUserName());
             userResponse.setEmail(user.getEmail());
+            userResponse.setCreated(user.getCreated());
             userResponse.setFullName(user.getFullName());
             userResponse.setPhoneNumber(user.getPhoneNumber());
             userResponse.setAddress(user.getAddress());
@@ -135,6 +139,7 @@ public class UserServiceImp implements UserService {
         user.setUserName(signUpRequest.getUserName());
         user.setPassword(encoder.encode(signUpRequest.getPassword()));
         user.setEmail(signUpRequest.getEmail());
+        user.setCreated(LocalDate.now());
         user.setAddress(signUpRequest.getAddress());
         user.setFullName(signUpRequest.getFullName());
         user.setPhoneNumber(signUpRequest.getPhoneNumber());
@@ -181,7 +186,7 @@ public class UserServiceImp implements UserService {
             user.setAddress(userRequest.getAddress());
             userRepository.save(user);
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -204,7 +209,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public Map<String, Object> searchByName(String userName, Pageable pageable) {
-        Page<User> listUser = userRepository.searchUserByFullNameContainingIgnoreCase(userName,pageable);
+        Page<User> listUser = userRepository.searchUserByFullNameContainingIgnoreCase(userName, pageable);
         List<GetAllUserResponse> list = new ArrayList<>();
         for (User user : listUser) {
             GetAllUserResponse userResponse = new GetAllUserResponse();
@@ -219,8 +224,8 @@ public class UserServiceImp implements UserService {
         }
         Map<String, Object> listUserResponse = new HashMap<>();
         listUserResponse.put("listUser", list);
-        listUserResponse.put("totalItems",listUser.getTotalElements());
-        listUserResponse.put("totalPage",listUser.getTotalPages());
+        listUserResponse.put("totalItems", listUser.getTotalElements());
+        listUserResponse.put("totalPage", listUser.getTotalPages());
         return listUserResponse;
     }
 
@@ -276,6 +281,115 @@ public class UserServiceImp implements UserService {
         User users = findByUserName(userName);
         users.setPassword(encoder.encode(newPass));
         return userRepository.save(users);
+    }
+
+    @Override
+    public List<NewUserByDays> newUserByDate(int days) {
+        try {
+                LocalDate end = LocalDate.now();
+                LocalDate start = end.minusDays(days);
+                List<User> listUser = userRepository.findAllByCreatedBetween(start, end);
+                return changeData(listUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public boolean addToWishList(int productID) {
+        CustomUserDetails customUserDetail = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            User user = userRepository.findById(customUserDetail.getUserId()).get();
+            Product product = productRepository.findById(productID).get();
+            user.getWishList().add(product);
+            userRepository.save(user);
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean removeFromWishList(int productID) {
+        CustomUserDetails customUserDetail = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            User user = userRepository.findById(customUserDetail.getUserId()).get();
+            for (Product pro:user.getWishList()) {
+                if (pro.getProductID()==productID) {
+                    user.getWishList().remove(pro);
+                    break;
+                }
+            }
+            userRepository.save(user);
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public List<WishListResponse> getUserWishList() {
+        CustomUserDetails customUserDetail = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            User user = userRepository.findById(customUserDetail.getUserId()).get();
+            List<WishListResponse> list = new ArrayList<>();
+            for (Product product:user.getWishList()) {
+                WishListResponse wishList = new WishListResponse();
+                wishList.setProductName(product.getProductName());
+                wishList.setImage(product.getImage());
+                wishList.setTitle(product.getTitle());
+                wishList.setPrice(product.getPrice());
+                wishList.setLimited(product.isLimited()?"Limited":"Unlimited");
+                list.add(wishList);
+            }
+            return list;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public Map<String, Integer> favoriteProduct() {
+        List<Integer> list = userRepository.favoriteProduct();
+        List<Product> listProduct = new ArrayList<>();
+        for (Integer id:list) {
+            Product product = productRepository.findById(id).get();
+            listProduct.add(product);
+        }
+        Map<String, Integer> data = new HashMap<>();
+        for (Product product:listProduct) {
+            String key = product.getProductName();
+            if (data.containsKey(key)) {
+                int newQuantity = data.get(key) +1;
+                data.put(product.getProductName(),newQuantity);
+            } else {
+                data.put(product.getProductName(),1);
+            }
+        }
+        return data;
+    }
+
+    private List<NewUserByDays> changeData(List<User> list) {
+        List<NewUserByDays> listUserResponse = new ArrayList<>();
+        for (User user : list) {
+            NewUserByDays userResponse = new NewUserByDays();
+            userResponse.setUserID(user.getUserID());
+            userResponse.setUserName(user.getUserName());
+            userResponse.setEmail(user.getEmail());
+            userResponse.setCreated(user.getCreated());
+            userResponse.setFullName(user.getFullName());
+            userResponse.setPhoneNumber(user.getPhoneNumber());
+            userResponse.setAddress(user.getAddress());
+            listUserResponse.add(userResponse);
+        }
+        List<NewUserByDays> listResponse = listUserResponse.stream()
+                .sorted(Comparator.comparing(NewUserByDays::getCreated).reversed())
+                .collect(Collectors.toList());
+        return listResponse;
     }
 
     public String generateToken(CustomUserDetails customUserDetails) {

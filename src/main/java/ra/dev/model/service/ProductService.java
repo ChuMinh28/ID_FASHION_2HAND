@@ -22,10 +22,10 @@ public interface ProductService {
     Product createProduct(Product createProduct);
     Product updateProduct(int productID, Product updateProduct);
     List<GetProduct> listSale();
-
     Map<String,Object> getPagging(int id, int number,String searchBy,String sortBy,String name,String direction,int page, int size);
     Set<GetProductByCat> findProductByCatalog(ProductByCat productByCat);
     List<RevenueLisst> getListRevenue(LocalDate start, LocalDate end);
     void exportFile(HttpServletResponse response) throws IOException;
+
 
 }

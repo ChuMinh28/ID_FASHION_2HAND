@@ -100,6 +100,16 @@ public class OrderController {
         }
     }
 
+    @PatchMapping("cancelOrder/{orderID}")
+    public ResponseEntity<?> cancelOrder(@PathVariable("orderID") int orderID) {
+        boolean check = orderService.cancelOrder(orderID);
+        if (check) {
+            return ResponseEntity.ok("Cancel order successfully!");
+        } else {
+            return ResponseEntity.badRequest().body("Action failed!");
+        }
+    }
+
     @PostMapping("checkout")
     public Order checkout(@RequestBody OrderCreate orderCreate) {
         return orderService.checkout(orderCreate);
@@ -129,6 +139,4 @@ public class OrderController {
                                                  @RequestParam(defaultValue = "3") int size) {
         return orderService.getPagging(status, searchBy, sortBy, name, direction, page, size);
     }
-
-
 }

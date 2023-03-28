@@ -1,6 +1,7 @@
 package ra.dev.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ra.dev.dto.request.CreateProductDetail;
 import ra.dev.model.entity.Color;
@@ -56,5 +57,15 @@ public class ProductDetailController {
         return productDetailService.getPagging(page,size,direction,sortBy);
     }
 
+    @PatchMapping("updateQuantity/{productDetailID}")
+    public ResponseEntity<?> updateQuantity(@PathVariable("productDetailID") int productDetailID,
+                                            @RequestParam("quantity") int quantity,
+                                            @RequestParam("action") String action) {
+        return ResponseEntity.ok(productDetailService.updateQuantity(productDetailID,quantity,action));
+    }
 
+    @GetMapping("getHistoryUpdate/{productDetailID}")
+    public ResponseEntity<?> getHistoryUpdate(@PathVariable("productDetailID") int productDetailID) {
+        return ResponseEntity.ok(productDetailService.getHistory(productDetailID));
+    }
 }

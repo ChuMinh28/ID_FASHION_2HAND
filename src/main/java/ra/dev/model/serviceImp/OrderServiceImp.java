@@ -18,13 +18,9 @@ import ra.dev.dto.respone.OrderResponse;
 import ra.dev.dto.respone.RevenueByPromotion;
 import ra.dev.dto.respone.*;
 
-import ra.dev.model.entity.Order;
-import ra.dev.model.entity.OrderDetail;
-import ra.dev.model.entity.User;
+import ra.dev.model.entity.*;
 
-import ra.dev.model.repository.OrderDetailRepository;
-import ra.dev.model.repository.OrderRepository;
-import ra.dev.model.repository.UserRepository;
+import ra.dev.model.repository.*;
 import ra.dev.model.service.OrderService;
 import ra.dev.security.CustomUserDetails;
 
@@ -37,6 +33,8 @@ import java.util.stream.Collectors;
 public class OrderServiceImp implements OrderService {
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private ProductDetailRepository productDetailRepository;
     @Autowired
     private OrderDetailRepository orderDetailRepository;
     @Autowired
@@ -247,21 +245,21 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     public Map<LocalDate, Object> getRevenueByDate(LocalDate start, LocalDate end) {
-        List<Order> listOrderComplete = orderRepository.findOrderByOrderDateBetweenAndOrderStatus(start,end,4);
+        List<Order> listOrderComplete = orderRepository.findOrderByOrderDateBetweenAndOrderStatus(start, end, 4);
         Map<LocalDate, Object> mapOrder = new HashMap<>();
         for (Order order : listOrderComplete) {
             int totalOrder = 1;
             int totalAmount = order.getTotalAmount();
             RevenueByPromotion revenueByPromotion = new RevenueByPromotion();
             revenueByPromotion.setTotalAmount(totalAmount);
-            revenueByPromotion.setCountOrder(totalOrder);
+            revenueByPromotion.setTotalOrder(totalOrder);
             LocalDate key = order.getOrderDate();
             if (mapOrder.containsKey(key)) {
                 RevenueByPromotion oldOrder = (RevenueByPromotion) mapOrder.get(key);
-                totalOrder += oldOrder.getCountOrder();
+                totalOrder += oldOrder.getTotalOrder();
                 totalAmount += oldOrder.getTotalAmount();
                 revenueByPromotion.setTotalAmount(totalAmount);
-                revenueByPromotion.setCountOrder(totalOrder);
+                revenueByPromotion.setTotalOrder(totalOrder);
                 mapOrder.put(key, revenueByPromotion);
             } else {
                 mapOrder.put(key, revenueByPromotion);
@@ -275,34 +273,118 @@ public class OrderServiceImp implements OrderService {
     public ResponseEntity<?> getRevenueByAddress(String address, LocalDate start, LocalDate end) {
         List<Order> orderList = orderRepository.findByOrderStatusAndAddressEqualsAndOrderDateBetween(4, address, start, end);
         List<RevenueByAddress> addressList = new ArrayList<>();
-        long daysBetween = ChronoUnit.DAYS.between(start,end);
-        for (int i = 0; i <=daysBetween ; i++) {
-            RevenueByAddress revenue=new RevenueByAddress();
-            revenue.setId(i+1);
+        long daysBetween = ChronoUnit.DAYS.between(start, end);
+        for (int i = 0; i <= daysBetween; i++) {
+            RevenueByAddress revenue = new RevenueByAddress();
+            revenue.setId(i + 1);
             revenue.setDateOrder(start.plusDays(i));
             revenue.setAddress(address);
             revenue.setRevenue(0);
-
-            for (Order o:orderList ) {
-                if (o.getOrderDate().equals(revenue.getDateOrder())){
-                    revenue.setRevenue(revenue.getRevenue()+o.getTotalAmount());
-
+            for (Order o : orderList) {
+                if (o.getOrderDate().equals(revenue.getDateOrder())) {
+                    revenue.setRevenue(revenue.getRevenue() + o.getTotalAmount());
                 }
             }
             addressList.add(revenue);
         }
-
-
         return ResponseEntity.ok(addressList);
-
-
     }
 
-    public int getTotalRevenue(List<Order> orderList) {
-        int revenue = 0;
-        for (Order o : orderList) {
-            revenue += o.getTotalAmount();
+    @Override
+    public List<NewUserHasOrder> newUserHasOrder(int days) {
+        try {
+            LocalDate end = LocalDate.now();
+            LocalDate start = end.minusDays(days);
+            List<User> listUser = userRepository.findAllByCreatedBetween(start, end);
+            List<NewUserHasOrder> list = new ArrayList<>();
+            for (User user : listUser) {
+                List<Order> listOrder = orderRepository.findAllByUser_UserID(user.getUserID());
+                if (!listOrder.isEmpty()) {
+                    NewUserHasOrder userResponse = new NewUserHasOrder();
+                    userResponse.setUserID(user.getUserID());
+                    userResponse.setUserName(user.getUserName());
+                    userResponse.setEmail(user.getEmail());
+                    userResponse.setCreated(user.getCreated());
+                    userResponse.setFullName(user.getFullName());
+                    userResponse.setPhoneNumber(user.getPhoneNumber());
+                    userResponse.setAddress(user.getAddress());
+                    for (Order order : user.getListOrder()) {
+                        if (order.getOrderStatus() != 1 && order.getOrderStatus() != 0) {
+                            OrderRecentResponse orderRecentResponse = new OrderRecentResponse();
+                            orderRecentResponse.setOrderID(order.getOrderID());
+                            orderRecentResponse.setCreated(order.getOrderDate());
+                            if (order.getOrderStatus() == 2) {
+                                orderRecentResponse.setOrderStatus("Pending");
+                            }
+                            if (order.getOrderStatus() == 3) {
+                                orderRecentResponse.setOrderStatus("Confirmed");
+                            }
+                            if (order.getOrderStatus() == 4) {
+                                orderRecentResponse.setOrderStatus("Complete");
+                            }
+                            orderRecentResponse.setOrderID(order.getOrderID());
+                            orderRecentResponse.setPaymentMethod("Cash");
+                            orderRecentResponse.setTotalAmount(order.getTotalAmount());
+                            userResponse.getListOrder().add(orderRecentResponse);
+                        }
+                    }
+                    list.add(userResponse);
+                }
+            }
+            List<NewUserHasOrder> listResponse = list.stream()
+                    .sorted(Comparator.comparing(NewUserHasOrder::getCreated).reversed())
+                    .collect(Collectors.toList());
+            return listResponse;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        return revenue;
+    }
+
+    @Override
+    public boolean cancelOrder(int orderID) {
+        try {
+            Order order = orderRepository.findById(orderID).get();
+            if (order.getOrderStatus() == 2) {
+                order.setOrderStatus(0);
+                orderRepository.save(order);
+                List<OrderDetail> listOrderDetail = order.getListOrderDetail();
+                for (OrderDetail orderDetail : listOrderDetail) {
+                    ProductDetail productDetail = productDetailRepository.findById(orderDetail.getProduct().getProductID()).get();
+                    productDetail.setQuantity(orderDetail.getQuantity());
+                    productDetailRepository.save(productDetail);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public int productsWaiting() {
+        List<Order> productsWaiting = orderRepository.findOrderByOrderStatus(3);
+        int quantity = 0;
+        List<OrderDetail> od = orderDetailRepository.findByOrderIn(productsWaiting);
+        for (OrderDetail ods : od) {
+            quantity += ods.getQuantity();
+        }
+        return quantity;
+    }
+
+    @Override
+    public List<CancelOrder> cancelProduct() {
+        List<Order> productsCancel = orderRepository.findOrderByOrderStatus(0);
+        List<CancelOrder> cancelOrderList = new ArrayList<>();
+        for (Order o : productsCancel) {
+            int quantity = 0;
+            for (OrderDetail ods : o.getListOrderDetail()) {
+                quantity += ods.getQuantity();
+            }
+            CancelOrder c = new CancelOrder(o.getOrderID(), o.getUser().getFullName()
+                                            , quantity, o.getTotalAmount());
+            cancelOrderList.add(c);
+        }
+        return cancelOrderList;
     }
 }
