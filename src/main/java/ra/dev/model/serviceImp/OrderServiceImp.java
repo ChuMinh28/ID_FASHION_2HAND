@@ -252,14 +252,14 @@ public class OrderServiceImp implements OrderService {
             int totalAmount = order.getTotalAmount();
             RevenueByPromotion revenueByPromotion = new RevenueByPromotion();
             revenueByPromotion.setTotalAmount(totalAmount);
-            revenueByPromotion.setCountOrder(totalOrder);
+            revenueByPromotion.setTotalOrder(totalOrder);
             LocalDate key = order.getOrderDate();
             if (mapOrder.containsKey(key)) {
                 RevenueByPromotion oldOrder = (RevenueByPromotion) mapOrder.get(key);
-                totalOrder += oldOrder.getCountOrder();
+                totalOrder += oldOrder.getTotalOrder();
                 totalAmount += oldOrder.getTotalAmount();
                 revenueByPromotion.setTotalAmount(totalAmount);
-                revenueByPromotion.setCountOrder(totalOrder);
+                revenueByPromotion.setTotalOrder(totalOrder);
                 mapOrder.put(key, revenueByPromotion);
             } else {
                 mapOrder.put(key, revenueByPromotion);
