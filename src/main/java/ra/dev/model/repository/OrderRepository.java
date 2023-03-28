@@ -32,9 +32,13 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     Page<Order> findByAddressContaining(Pageable pageable, String name);
 
-    List<Order> findOrderByOrderDateBetween(LocalDate start, LocalDate end);
 
-    Order findOrderByListOrderDetailContaining(OrderDetail orderDetail);
 
-    List<Order> findByOrderStatusAndAddressEqualsAndOrderDateBetween(Integer status, String address, LocalDate start, LocalDate end);
+   List<Order> findOrderByOrderDateBetween(LocalDate start,LocalDate end);
+   Order findOrderByListOrderDetailContaining(OrderDetail orderDetail);
+
+
+
+    List<Order> findByOrderStatusAndAddressEqualsAndOrderDateBetween(Integer status,String address,LocalDate start,LocalDate end);
+
 }

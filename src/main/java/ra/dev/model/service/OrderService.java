@@ -28,6 +28,7 @@ public interface OrderService {
 
     Map<LocalDate, Object> getRevenueByDate(LocalDate start, LocalDate end);
 
+
     ResponseEntity<?> getRevenueByAddress(String address, LocalDate start, LocalDate end);
     List<NewUserHasOrder> newUserHasOrder(int days);
     boolean cancelOrder(int orderID);

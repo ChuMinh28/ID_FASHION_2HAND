@@ -1,5 +1,9 @@
 package ra.dev.controller;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +18,10 @@ import ra.dev.model.entity.Product;
 
 import ra.dev.model.service.ProductService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +108,10 @@ public class ProductController {
         LocalDate sxend = LocalDate.parse(end);
         return ResponseEntity.ok(productService.getListRevenue(sxstart, sxend));
 
+    }
+    @GetMapping("/export")
+    public void exportFile(HttpServletResponse respone) throws IOException {
+        productService.exportFile(respone);
     }
 }
 

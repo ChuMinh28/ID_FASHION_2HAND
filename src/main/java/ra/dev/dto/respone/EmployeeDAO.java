@@ -14,7 +14,7 @@ public class EmployeeDAO {
     public List<Product> findAllEmployees() {
         String sql = "select p.ProductID, p.Description, p.Gender, p.Discount, p.Image, p.Limited, p.Price,p.ProductName, p.ProductStatus, p.Shipping, p.Title\n" +
                 "from orderdetail o inner join product p on o.productID = p.ProductID\n" +
-                "where (select od.OrderStatus from orders od where od.OrderID = o.orderID) = 3||4\n" +
+                "where (select od.OrderStatus from orders od where od.OrderID = o.orderID) = 4\n" +
                 "group by o.productID\n" +
                 "order by sum(o.Quantity) DESC";
         Query query = entityManager.createNativeQuery(sql, Product.class);
