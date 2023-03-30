@@ -3,6 +3,11 @@ package ra.dev.model.serviceImp;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -32,6 +37,9 @@ import ra.dev.dto.request.SignupRequest;
 import ra.dev.security.CustomUserDetails;
 
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -371,6 +379,36 @@ public class UserServiceImp implements UserService {
             }
         }
         return data;
+    }
+
+    @Override
+    public void exportFile(HttpServletResponse response, int days) throws IOException {
+        List<NewUserByDays> listUser = newUserByDate(days);
+        Workbook workbook = new SXSSFWorkbook();
+        Sheet sheet = workbook.createSheet("New account");
+        Row row1 = sheet.createRow(0);
+        row1.createCell(0).setCellValue("Total new account");
+        row1.createCell(1).setCellValue(listUser.size());
+        Row row2 = sheet.createRow(1);
+        row2.createCell(0).setCellValue("User Name");
+        row2.createCell(1).setCellValue("Email");
+        row2.createCell(2).setCellValue("Created");
+        row2.createCell(3).setCellValue("Full Name");
+        row2.createCell(4).setCellValue("Address");
+        int rowNum = 2;
+        for (NewUserByDays user:listUser) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(user.getUserName());
+            row.createCell(1).setCellValue(user.getEmail());
+            row.createCell(2).setCellValue(user.getCreated().toString());
+            row.createCell(3).setCellValue(user.getFullName());
+            row.createCell(4).setCellValue(user.getAddress());
+        }
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=\"NewAccount.xlsx\"");
+        OutputStream outputStream = response.getOutputStream();
+        workbook.write(outputStream);
+        outputStream.close();
     }
 
     private List<NewUserByDays> changeData(List<User> list) {

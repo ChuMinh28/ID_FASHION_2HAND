@@ -560,15 +560,12 @@ public class ProductServiceImp implements ProductService {
             row.createCell(0).setCellValue(product.getProductID());
             row.createCell(1).setCellValue(product.getProductName());
             row.createCell(2).setCellValue(product.getPrice());
-            row.createCell(3).setCellValue(product.getDiscount());
+            row.createCell(3).setCellValue(product.getDiscount()+"%");
         }
         response.setContentType("application/vnd.ms-excel");
-        response.setHeader("Content-Disposition", "attachment; filename=\"ProdutcList.xlsx\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"ProductList.xlsx\"");
         OutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
         outputStream.close();
     }
-
-
-
 }

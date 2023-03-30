@@ -7,6 +7,9 @@ import ra.dev.dto.respone.NewUserByDays;
 import ra.dev.dto.respone.NewUserHasOrder;
 import ra.dev.model.service.OrderService;
 import ra.dev.model.service.UserService;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -70,5 +73,10 @@ public class ReportController {
     @GetMapping("/productCancel")
     public ResponseEntity<?> productCancel(){
         return ResponseEntity.ok(orderService.cancelProduct());
+    }
+
+    @GetMapping("/exportNewAccount")
+    public void exportFile(HttpServletResponse response, @RequestParam("days") int days) throws IOException {
+        userService.exportFile(response, days);
     }
 }

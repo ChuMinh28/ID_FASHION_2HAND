@@ -12,6 +12,8 @@ import ra.dev.dto.request.LoginRequest;
 import ra.dev.dto.request.SignupRequest;
 import ra.dev.dto.respone.JwtResponse;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -35,4 +37,5 @@ public interface UserService {
     boolean removeFromWishList(int productID);
     List<WishListResponse> getUserWishList();
     Map<String, Integer> favoriteProduct();
+    void exportFile(HttpServletResponse response, int days) throws IOException;
 }
